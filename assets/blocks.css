@@ -1,0 +1,15 @@
+/* Style for blocks */
+
+/* Photo *********************************************************************/
+
+figure.wp-block-gutenblocks-photo img {
+	display: inline-block;
+	width: inherit;
+}
+
+figure.wp-block-gutenblocks-photo figcaption,
+[data-type="gutenblocks/photo"] figcaption {
+	margin-top: 0.5em;
+	color: #6c7781;
+	font-size: 13px;
+}
