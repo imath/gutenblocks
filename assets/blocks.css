@@ -13,3 +13,24 @@ figure.wp-block-gutenblocks-photo figcaption,
 	color: #6c7781;
 	font-size: 13px;
 }
+
+[data-type="gutenblocks/photo"] .components-placeholder__label label:before {
+	font-family: 'dashicons';
+	display: inline-block;
+	width: 20px;
+	height: 20px;
+	font-size: 20px;
+	line-height: 1;
+	text-decoration: inherit;
+	font-weight: normal;
+	font-style: normal;
+	text-align: center;
+	-webkit-transition: color .1s ease-in 0;
+	transition: color .1s ease-in 0;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	vertical-align: text-top;
+	content: "\f306";
+	margin-right: 5px;
+	margin-top: -1px;
+}

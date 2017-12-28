@@ -60,7 +60,10 @@
 			var onChangeInput = function( event ) {
 				event.preventDefault();
 
-				props.setAttributes( { src: event.target.value } );
+				props.setAttributes( {
+					src:       event.target.value,
+					alignment: 'none'
+				} );
 			};
 
 			var onUrlSubmit = function( event ) {
@@ -96,8 +99,6 @@
 
 			// Output the form to insert a photo.
 			if ( ! props.attributes.width || ! props.attributes.src ) {
-				props.setAttributes( { alignment: 'none' } );
-
 				return el(
 					'div', {
 						className: 'components-placeholder'
@@ -106,6 +107,16 @@
 							onSubmit: onUrlSubmit
 						},
 						[
+							el(
+								'div', {
+									key:       'block-placeholder',
+									className: 'components-placeholder__label'
+								}, el(
+									'label', {
+										key: 'block-label'
+									}, gutenBlocksStrings.photo.title
+								)
+							),
 							el(
 								'input', {
 									key:         'url-input',
