@@ -34,3 +34,19 @@ figure.wp-block-gutenblocks-photo figcaption,
 	margin-right: 5px;
 	margin-top: -1px;
 }
+
+/* GitHub ********************************************************************/
+
+.wp-block-gutenblocks-gist .gist .blob-num {
+	border: none;
+}
+
+[data-type="gutenblocks/gist"] .components-placeholder__label label:before {
+	display: inline-block;
+	content:"";
+	width: 20px;
+	height: 20px;
+	background: url( 'svg/gist.svg' ) no-repeat;
+	background-size: contain;
+	vertical-align: -5px;
+}
