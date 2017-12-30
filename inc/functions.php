@@ -88,6 +88,10 @@ function gutenblocks_register_scripts() {
 			'location' => sprintf( '%1$sblocks/gist%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
 		),
+		'gutenblocks-wp-embed' => array(
+			'location' => sprintf( '%1$sblocks/wp-embed%2$s.js', $url, $min ),
+			'deps'     => array( 'wp-blocks', 'wp-element' ),
+		),
 	), $url, $min, $v );
 
 	foreach ( $scripts as $js_handle => $script ) {
@@ -284,7 +288,11 @@ function gutenblocks_l10n() {
 			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
 			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
 			'buttonPlaceholder'  => _x( 'Insérer',      'Gist Block Button', 'gutenblocks' ),
-			'editBubble'         => _x( 'Modifier',     'Gist Block Bubble', 'gutenblocks' ),
+		),
+		'wp_embed' => array(
+			'title'              => _x( 'WordPress',         'WP Embed Block Title',  'gutenblocks' ),
+			'inputPlaceholder'   => _x( 'URL de l’article…', 'WP Embed Block Input',  'gutenblocks' ),
+			'buttonPlaceholder'  => _x( 'Insérer',           'WP Embed Block Button', 'gutenblocks' ),
 		),
 	);
 }
@@ -295,10 +303,18 @@ function gutenblocks_l10n() {
  * @since 1.0.0
  */
 function gutenblocks_editor() {
-	wp_enqueue_script( 'gutenblocks-photo' );
-	wp_localize_script( 'gutenblocks-photo', 'gutenBlocksStrings', gutenblocks_l10n() );
+	$blocks = array(
+		'gutenblocks-photo',
+		'gutenblocks-gist',
+		'gutenblocks-wp-embed'
+	);
 
-	wp_enqueue_script( 'gutenblocks-gist' );
+	foreach ( $blocks as $block ) {
+		wp_enqueue_script( $block );
+	}
+
+	$handle = reset( $blocks );
+	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
 }
 add_action( 'enqueue_block_editor_assets', 'gutenblocks_editor' );
 

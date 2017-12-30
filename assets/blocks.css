@@ -1,6 +1,6 @@
 /* Style for blocks */
 
-/* Photo *********************************************************************/
+/* Photo/WP Embed ************************************************************/
 
 figure.wp-block-gutenblocks-photo img {
 	display: inline-block;
@@ -14,7 +14,8 @@ figure.wp-block-gutenblocks-photo figcaption,
 	font-size: 13px;
 }
 
-[data-type="gutenblocks/photo"] .components-placeholder__label label:before {
+[data-type="gutenblocks/photo"] .components-placeholder__label label:before,
+[data-type="gutenblocks/wp-embed"] .components-placeholder__label label:before {
 	font-family: 'dashicons';
 	display: inline-block;
 	width: 20px;
@@ -30,9 +31,16 @@ figure.wp-block-gutenblocks-photo figcaption,
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	vertical-align: text-top;
-	content: "\f306";
 	margin-right: 5px;
 	margin-top: -1px;
+}
+
+[data-type="gutenblocks/photo"] .components-placeholder__label label:before {
+	content: "\f306";
+}
+
+[data-type="gutenblocks/wp-embed"] .components-placeholder__label label:before {
+	content: "\f324";
 }
 
 /* GitHub ********************************************************************/

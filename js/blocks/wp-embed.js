@@ -1,5 +1,5 @@
 /**
- * Gist block
+ * WordPress Embed block
  */
 
 /* global gutenBlocksStrings, wpApiSettings */
@@ -8,27 +8,16 @@
 	    registerBlockType = wp.blocks.registerBlockType,
 	    SandBox           = wp.components.SandBox;
 
-	registerBlockType( 'gutenblocks/gist', {
+	// Unregister the Gutenberg Block as it doesn't work for self embeds.
+	wp.blocks.unregisterBlockType( 'core-embed/wordpress' );
+
+	registerBlockType( 'gutenblocks/wp-embed', {
 
 		// Block Title
-		title: gutenBlocksStrings.gist.title,
+		title: gutenBlocksStrings.wp_embed.title,
 
 		// Block Icon
-		icon: el( 'svg', {
-			'aria-hidden': true,
-			role:          'img',
-			className:     'dashicon gist-icon',
-			focusable:     'false',
-			width:         '20',
-			height:        '20',
-			viewBox:       '0 0 12 16',
-			xmlns:         'http://www.w3.org/2000/svg'
-		}, el( 'path',
-				{
-					d: 'M7.5 5L10 7.5 7.5 10l-.75-.75L8.5 7.5 6.75 5.75 7.5 5zm-3 0L2 7.5 4.5 10l.75-.75L3.5 7.5l1.75-1.75L4.5 5zM0 13V2c0-.55.45-1 1-1h10c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H1c-.55 0-1-.45-1-1zm1 0h10V2H1v11z'
-				}
-			)
-		),
+		icon: 'wordpress-alt',
 
 		// Block Category
 		category: 'embed',
@@ -36,9 +25,6 @@
 		// Block Attributes
 		attributes: {
 			url: {
-				type: 'string'
-			},
-			src: {
 				type: 'string'
 			}
 		},
@@ -48,20 +34,30 @@
 				event.preventDefault();
 
 				props.setAttributes( {
-					url: event.target.value
+					url:        event.target.value,
+					hasChanged: true
 				} );
 			};
 
 			var onUrlSubmit = function( event ) {
-				event.preventDefault();
+				if ( event ) {
+					event.preventDefault();
+				}
 
 				props.setAttributes( {
 					loading: true
 				} );
 
-				var url = encodeURIComponent( props.attributes.url );
+				// Defaults to proxy
+				var action = 'proxy',
+				    url = encodeURIComponent( props.attributes.url );
 
-				window.fetch( wpApiSettings.root + 'oembed/1.0/proxy' +
+				// If it's a self embed, use the embed action.
+				if ( -1 !== props.attributes.url.indexOf( wpApiSettings.root.replace( '/wp-json', '' ) ) ) {
+					action = 'embed';
+				}
+
+				window.fetch( wpApiSettings.root + 'oembed/1.0/' + action +
 					'?url=' + url +
 					'&_wpnonce=' + wpApiSettings.nonce, {
 					credentials: 'include'
@@ -69,15 +65,21 @@
 					function( response ) {
 						response.json().then( function( reply ) {
 							props.setAttributes( {
-								src : reply.url
+								title: reply.title,
+								html:  reply.html
 							} );
 						} );
 					}
 				);
 			};
 
+			// If the URL has been already saved, load the WordPress embed.
+			if ( props.attributes.url && ! props.attributes.loading && ! props.attributes.hasChanged ) {
+				onUrlSubmit();
+			}
+
 			// Output the form to insert a gist.
-			if ( ! props.attributes.src && ! props.attributes.loading ) {
+			if ( ! props.attributes.html && ! props.attributes.loading ) {
 				return el(
 					'div', {
 						className: 'components-placeholder'
@@ -93,7 +95,7 @@
 								}, el(
 									'label', {
 										key: 'block-label'
-									}, gutenBlocksStrings.gist.title
+									}, gutenBlocksStrings.wp_embed.title
 								)
 							),
 							el(
@@ -101,7 +103,7 @@
 									key:         'url-input',
 									type:        'url',
 									className:   'components-placeholder__input',
-									placeholder: gutenBlocksStrings.gist.inputPlaceholder,
+									placeholder: gutenBlocksStrings.wp_embed.inputPlaceholder,
 									onChange:    onChangeInput
 								}
 							),
@@ -110,14 +112,14 @@
 									key:       'url-button',
 									type:      'submit',
 									className: 'button-secondary'
-								}, gutenBlocksStrings.gist.buttonPlaceholder
+								}, gutenBlocksStrings.wp_embed.buttonPlaceholder
 							)
 						]
 					)
 				);
 
 			// Display the loader.
-			} else if ( ! props.attributes.src ) {
+			} else if ( ! props.attributes.html ) {
 				return el( 'div', {
 					className: 'components-placeholder'
 
@@ -136,7 +138,8 @@
 				className: 'wp-block-embed'
 			}, el(
 				SandBox, {
-					html: '<script src="' + props.attributes.src +'"></script>'
+					title: props.attributes.title,
+					html:  props.attributes.html
 				} )
 			);
 		},

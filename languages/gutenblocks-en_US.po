@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GutenBlocks 1.1.0\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/gutenblocks/issues\n"
-"POT-Creation-Date: 2017-12-30 16:17:57+00:00\n"
-"PO-Revision-Date: 2017-12-30 17:18+0100\n"
+"POT-Creation-Date: 2017-12-30 17:55:23+00:00\n"
+"PO-Revision-Date: 2017-12-30 18:56+0100\n"
 "Last-Translator: imath <mathchristo@yahoo.fr>\n"
 "Language-Team: FRENCH <contact@imathi.eu>\n"
 "Language: en_US\n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Poedit 1.7.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: inc/functions.php:256
+#: inc/functions.php:260
 msgid "Afficher le code imbriqué"
 msgstr "Show the embed code"
 
@@ -39,47 +39,57 @@ msgstr "imath"
 msgid "https://imathi.eu/"
 msgstr "https://imathi.eu/"
 
-#: inc/functions.php:277
+#: inc/functions.php:281
 msgctxt "Photo Block Title"
 msgid "Photo (URL)"
 msgstr "Photo (URL)"
 
-#: inc/functions.php:278
+#: inc/functions.php:282
 msgctxt "Photo Block Input"
 msgid "URL de la photo…"
 msgstr "Enter the photo URL…"
 
-#: inc/functions.php:279
+#: inc/functions.php:283
 msgctxt "Photo Block Button"
 msgid "Insérer"
 msgstr "Insert"
 
-#: inc/functions.php:280
+#: inc/functions.php:284
 msgctxt "Photo Block Caption"
 msgid "Ajoutez une légende…"
 msgstr "Write a caption…"
 
-#: inc/functions.php:281
+#: inc/functions.php:285
 msgctxt "Photo Block Bubble"
 msgid "Modifier"
 msgstr "Edit"
 
-#: inc/functions.php:284
+#: inc/functions.php:288
 msgctxt "Gist Block Title"
 msgid "GitHub Gist"
 msgstr "GitHub Gist"
 
-#: inc/functions.php:285
+#: inc/functions.php:289
 msgctxt "Gist Block Input"
 msgid "URL du gist…"
 msgstr "Enter the Gist URL…"
 
-#: inc/functions.php:286
+#: inc/functions.php:290
 msgctxt "Gist Block Button"
 msgid "Insérer"
 msgstr "Insert"
 
-#: inc/functions.php:287
-msgctxt "Gist Block Bubble"
-msgid "Modifier"
-msgstr "Edit"
+#: inc/functions.php:293
+msgctxt "WP Embed Block Title"
+msgid "WordPress"
+msgstr "WordPress"
+
+#: inc/functions.php:294
+msgctxt "WP Embed Block Input"
+msgid "URL de l’article…"
+msgstr "Enter the post URL…"
+
+#: inc/functions.php:295
+msgctxt "WP Embed Block Button"
+msgid "Insérer"
+msgstr "Insert"
