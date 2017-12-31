@@ -113,7 +113,8 @@
 									className: 'components-placeholder__label'
 								}, el(
 									'label', {
-										key: 'block-label'
+										key: 'block-label',
+										for: 'url-input-' + props.id // jshint ignore:line
 									}, gutenBlocksStrings.photo.title
 								)
 							),
@@ -121,6 +122,7 @@
 								'input', {
 									key:         'url-input',
 									type:        'url',
+									id:          'url-input-' + props.id,
 									className:   'components-placeholder__input',
 									placeholder: gutenBlocksStrings.photo.inputPlaceholder,
 									onChange:    onChangeInput

@@ -94,7 +94,8 @@
 									className: 'components-placeholder__label'
 								}, el(
 									'label', {
-										key: 'block-label'
+										key: 'block-label',
+										for: 'url-input-' + props.id // jshint ignore:line
 									}, gutenBlocksStrings.wp_embed.title
 								)
 							),
@@ -102,6 +103,7 @@
 								'input', {
 									key:         'url-input',
 									type:        'url',
+									id:          'url-input-' + props.id,
 									className:   'components-placeholder__input',
 									placeholder: gutenBlocksStrings.wp_embed.inputPlaceholder,
 									onChange:    onChangeInput
