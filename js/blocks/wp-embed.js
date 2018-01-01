@@ -94,8 +94,8 @@
 									className: 'components-placeholder__label'
 								}, el(
 									'label', {
-										key: 'block-label',
-										for: 'url-input-' + props.id // jshint ignore:line
+										key    : 'block-label',
+										htmlFor: 'url-input-' + props.id
 									}, gutenBlocksStrings.wp_embed.title
 								)
 							),
