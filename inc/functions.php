@@ -92,6 +92,10 @@ function gutenblocks_register_scripts() {
 			'location' => sprintf( '%1$sblocks/wp-embed%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
 		),
+		'gutenblocks-release' => array(
+			'location' => sprintf( '%1$sblocks/release%2$s.js', $url, $min ),
+			'deps'     => array( 'wp-blocks', 'wp-element' ),
+		),
 	), $url, $min, $v );
 
 	foreach ( $scripts as $js_handle => $script ) {
@@ -256,7 +260,7 @@ function gutenblocks_gist_handler( $matches, $attr, $url, $rawattr ) {
 	if ( is_front_page() || is_home() ) {
 		return sprintf(
 			'<p><a href="%1$s">%2$s</a></p>',
-			esc_url( $src ),
+			esc_url( $url ),
 			esc_html__( 'Afficher le code imbriqué', 'gutenblocks' )
 		);
 	}
@@ -294,6 +298,15 @@ function gutenblocks_l10n() {
 			'inputPlaceholder'   => _x( 'URL de l’article…', 'WP Embed Block Input',  'gutenblocks' ),
 			'buttonPlaceholder'  => _x( 'Insérer',           'WP Embed Block Button', 'gutenblocks' ),
 		),
+		'release' => array(
+			'title'              => _x( 'GitHub Release',        'Release Block Title',        'gutenblocks' ),
+			'namePlaceholder'    => _x( 'Nom du dépôt',          'Release Block Slug',         'gutenblocks' ),
+			'labelPlaceholder'   => _x( 'Nom de l’extension…',   'Release Block Name',         'gutenblocks' ),
+			'tagPlaceholder'     => _x( 'Numéro de version',     'Release Block Tag',          'gutenblocks' ),
+			'notesPlaceholder'   => _x( 'Notes sur la version…', 'Release Block Notes',        'gutenblocks' ),
+			'ghUsername'         => gutenblocks_github_release_get_username(),
+			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
+		),
 	);
 }
 
@@ -306,7 +319,8 @@ function gutenblocks_editor() {
 	$blocks = array(
 		'gutenblocks-photo',
 		'gutenblocks-gist',
-		'gutenblocks-wp-embed'
+		'gutenblocks-wp-embed',
+		'gutenblocks-release',
 	);
 
 	foreach ( $blocks as $block ) {
@@ -327,6 +341,189 @@ function gutenblocks_style() {
 	wp_enqueue_style( 'gutenblocks' );
 }
 add_action( 'enqueue_block_assets', 'gutenblocks_style' );
+
+/**
+ * Get the GitHub username.
+ *
+ * @since  1.1.0
+ *
+ * @return string The GitHub username.
+ */
+function gutenblocks_github_release_get_username() {
+	/**
+	 * Filter here to customize with your GitHub username.
+	 *
+	 * @since  1.1.0
+	 *
+	 * @param  string $value Your GitHub username.
+	 */
+	return apply_filters( 'gutenblocks_github_release_get_username', 'imath' );
+}
+
+/**
+ * Get base64 encoded SVG icon.
+ *
+ * @since 1.1.0
+ *
+ * @param  string $name The name of the SVG icon.
+ * @return string       Base 64 encoded SVG icon.
+ */
+function gutenblocks_github_release_icon( $name = 'default_icon' ) {
+	$icons = array(
+		'default_icon'  => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><g><path d="M1 4.27v7.47c0 .45.3.84.75.97l6.5 1.73c.16.05.34.05.5 0l6.5-1.73c.45-.13.75-.52.75-.97V4.27c0-.45-.3-.84-.75-.97l-6.5-1.74a1.4 1.4 0 0 0-.5 0L1.75 3.3c-.45.13-.75.52-.75.97zm7 9.09l-6-1.59V5l6 1.61v6.75zM2 4l2.5-.67L11 5.06l-2.5.67L2 4zm13 7.77l-6 1.59V6.61l2-.55V8.5l2-.53V5.53L15 5v6.77zm-2-7.24L6.5 2.8l2-.53L15 4l-2 .53z"/></g></svg>',
+		'download_icon' => '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><rect x="0" fill="none" width="20" height="20"/><g><path fill="#FFFFFF" d="M14.01 4v6h2V2H4v8h2.01V4h8zm-2 2v6h3l-5 6-5-6h3V6h4z"/></g></svg>',
+	);
+
+	if ( ! isset( $icons[ $name ] ) ) {
+		return '';
+	}
+
+	return 'data:image/svg+xml;base64,' . base64_encode( $icons[ $name ] );
+}
+
+/**
+ * Dynamic GutenBlock's GitHub Release callback.
+ *
+ * @since 1.1.0
+ *
+ * @param  array $attributes The GutenBlock attributes.
+ * @return string            The content to output on front-end
+ */
+function gutenblocks_github_release_callback( $attributes = array() ) {
+	// Merge defaults with attributes
+	$a = wp_parse_args( $attributes, array(
+		'name'  => '',
+		'label' => '',
+		'tag'   => '',
+		'logo'  => '',
+		'notes' => '',
+	) );
+
+	if ( empty( $a['name'] ) || empty( $a['tag'] ) ) {
+		return;
+	}
+
+	// sanitize the name.
+	$name = sanitize_key( remove_accents( $a['name'] ) );
+	$tag  = $a['tag'];
+
+	// Try the transient first (dayly updated).
+	$release_data   = get_site_transient( 'github_release_data_' . $name );
+	$download_count = 0;
+
+	// The transient is not set yet or it's a new release.
+	if ( ! isset( $release_data->tag_name ) || version_compare( $tag, $release_data->tag_name, '>' ) ) {
+		$gh_releases_url = sprintf( 'https://api.github.com/repos/imath/%s/releases', $name );
+		$gh_response     = wp_remote_get( $gh_releases_url );
+
+		if ( ! is_wp_error( $gh_response ) && 200 === (int) wp_remote_retrieve_response_code( $gh_response ) ) {
+			$releases       = json_decode( wp_remote_retrieve_body( $gh_response ), true );
+
+			if ( $releases ) {
+				foreach ( (array) $releases as $release ) {
+					$package  = array();
+
+					// Count downloads about all releases.
+					if ( ! empty( $release['assets'] ) ) {
+						$package         = reset( $release['assets'] );
+						$download_count += (int) $package['download_count'];
+					}
+
+					// Only keep the requested release
+					if ( $tag !== $release['tag_name'] ) {
+						continue;
+					}
+
+					$release_data = (object) array(
+						'id'       => $release['id'],
+						'url'      => $release['html_url'],
+						'name'     => $release['name'],
+						'tag_name' => $release['tag_name'],
+						'package'  => $package,
+					);
+				}
+
+				if ( isset( $release_data->id ) ) {
+					$release_data->downloads = $download_count;
+					set_site_transient( 'github_release_data_' . $name, $release_data, DAY_IN_SECONDS );
+				}
+			}
+		}
+	}
+
+	$label = $name;
+	if ( $a['label'] ) {
+		$label = esc_html( $a['label'] );
+	}
+
+	$release_url  = sprintf( 'https://github.com/imath/%1$s/releases/tag/%2$s', $name, $tag );
+	$download_url = sprintf( 'https://github.com/imath/%1$s/releases/download/%2$s/%1$s.zip', $name, $tag );
+
+	$count = '';
+	if ( isset( $release_data->downloads ) ) {
+		$count = sprintf( '<p class="description">%s</p>',
+			sprintf(
+				_n( '%d téléchargement', '%d téléchargements', $release_data->downloads, 'gutenblocks' ),
+				number_format_i18n( $release_data->downloads )
+			)
+		);
+	}
+
+	$logo = sprintf( '<img class="release-icon" src="%s">', gutenblocks_github_release_icon() );
+	if ( ! empty( $a['logo'] ) ) {
+		$logo = sprintf( '<img class="release-icon" src="%s">', esc_url( $a['logo'] ) );
+	}
+
+	if ( ! empty( $a['notes'] ) ) {
+		$notes  = str_replace( array( '<p>', '</p>' ), '', wpautop( trim( $a['notes'], "\n" ) ) );
+		$count  = sprintf( '<p class="description">%s</p>', wp_kses( $notes, array( 'br' => true ) ) ) ."\n" . $count;
+	}
+
+	return sprintf( '
+		<div class="plugin-card">
+			<div class="plugin-card-top">
+				<div class="name column-name">
+					<h3>
+						<a href="%1$s">
+							%2$s
+							%3$s
+						</a>
+					</h3>
+				</div>
+				<div class="desc column-description">
+					%4$s
+					<p class="description"><a href="%5$s" target="_blank">%6$s</a></p>
+				</div>
+				<div class="download">
+					<button class="button submit gh-download-button">
+						<img src="%7$s" class="gh-release-download-icon">
+						<a href="%1$s">%8$s</a>
+					</button>
+				</div>
+			</div>
+		</div>',
+		esc_url( $download_url ),
+		$logo,
+		$label,
+		$count,
+		esc_url( $release_url ),
+		esc_html__( 'Afficher la page GitHub de la version', 'gutenblocks' ),
+		gutenblocks_github_release_icon( 'download_icon' ),
+		sprintf( esc_html__( 'Télécharger la version %s', 'gutenblocks' ), $tag )
+	);
+}
+
+/**
+ * Register dynamic Gutenberg blocks.
+ *
+ * @since  1.1.0
+ */
+function gutenblocks_register_dynamic_blocks() {
+	register_block_type( 'gutenblocks/release', array(
+		'render_callback' => 'gutenblocks_github_release_callback',
+	) );
+}
+add_action( 'init', 'gutenblocks_register_dynamic_blocks' );
 
 /**
  * Loads translation.

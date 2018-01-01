@@ -19,3 +19,9 @@ This block lets us add GitHub Gists using their URL.
 ![WordPress Embeds](https://c1.staticflickr.com/5/4732/38515599855_882fd43747_o.png)
 
 This block replaces the Gutenberg's one so that self embeds can also be included.
+
+## GitHub Release
+
+![GitHub Release](https://c1.staticflickr.com/5/4589/39434045721_eb7c49a4db_o.png)
+
+This dynamic block will display a Plugin card on your front-end to display a link to the 'WordPress ready' archive asset download (`plugin-name.zip`).
