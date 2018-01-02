@@ -1,5 +1,8 @@
 /**
  * WordPress Embed block
+ *
+ * NB: this block will disappear as soon as https://github.com/WordPress/gutenberg/pull/4226
+ * is fixed.
  */
 
 /* global gutenBlocksStrings, wpApiSettings */
