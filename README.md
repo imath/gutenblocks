@@ -24,4 +24,4 @@ This block replaces the Gutenberg's one so that self embeds can also be included
 
 ![GitHub Release](https://c1.staticflickr.com/5/4589/39434045721_eb7c49a4db_o.png)
 
-This dynamic block will display a Plugin card on your front-end to display a link to the 'WordPress ready' archive asset download (`plugin-name.zip`).
+This dynamic block will display a Plugin card on your front-end. A link to the 'WordPress ready' zip package of the plugin release will be included (`plugin-name.zip`).
