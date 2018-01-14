@@ -104,6 +104,10 @@ if ( ! function_exists( 'gutenblocks' ) ) :
  * @since 1.0.0
  */
 function gutenblocks() {
+	if ( ! defined( 'GUTENBERG_VERSION' ) ) {
+		return false;
+	}
+	
 	return GutenBlocks::start();
 }
 add_action( 'plugins_loaded', 'gutenblocks', 5 );
