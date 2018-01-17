@@ -104,7 +104,7 @@ if ( ! function_exists( 'gutenblocks' ) ) :
  * @since 1.0.0
  */
 function gutenblocks() {
-	if ( ! defined( 'GUTENBERG_VERSION' ) ) {
+	if ( ! function_exists( 'gutenberg_init' ) ) {
 		return false;
 	}
 	
