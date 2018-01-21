@@ -519,6 +519,10 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
  * @since  1.1.0
  */
 function gutenblocks_register_dynamic_blocks() {
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return false;
+	}
+	
 	register_block_type( 'gutenblocks/release', array(
 		'render_callback' => 'gutenblocks_github_release_callback',
 	) );
