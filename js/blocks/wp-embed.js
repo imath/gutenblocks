@@ -136,7 +136,7 @@
 
 			// Output the gist using a SandBox.
 			return el( 'figure', {
-				key:       'gist-sandbox',
+				key:       'wp-embed-sandbox',
 				className: 'wp-block-embed'
 			}, el(
 				SandBox, {
