@@ -11,9 +11,6 @@
 	    registerBlockType = wp.blocks.registerBlockType,
 	    SandBox           = wp.components.SandBox;
 
-	// Unregister the Gutenberg Block as it doesn't work for self embeds.
-	wp.blocks.unregisterBlockType( 'core-embed/wordpress' );
-
 	registerBlockType( 'gutenblocks/wp-embed', {
 
 		// Block Title

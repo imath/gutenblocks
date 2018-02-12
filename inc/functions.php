@@ -329,6 +329,19 @@ function gutenblocks_editor() {
 
 	$handle = reset( $blocks );
 	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
+
+	wp_add_inline_script(
+		'wp-editor',
+		'
+		( function( wp ) {
+			if ( wp.blocks ) {
+				// Unregister the Gutenberg Block as it doesn\'t work for self embeds.
+				wp.blocks.unregisterBlockType( \'core-embed/wordpress\' );
+			}
+		} )( window.wp || {} );
+		',
+		'after'
+	);
 }
 add_action( 'enqueue_block_editor_assets', 'gutenblocks_editor' );
 
@@ -522,7 +535,7 @@ function gutenblocks_register_dynamic_blocks() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return false;
 	}
-	
+
 	register_block_type( 'gutenblocks/release', array(
 		'render_callback' => 'gutenblocks_github_release_callback',
 	) );
