@@ -330,18 +330,25 @@ function gutenblocks_editor() {
 	$handle = reset( $blocks );
 	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
 
+	/**
+	 * Unregister the Gutenberg Block as it doesn't work for self embeds.
+	 *
+	 * @see https://github.com/WordPress/gutenberg/pull/4226
+	 */
 	wp_add_inline_script(
 		'wp-editor',
 		'
 		( function( wp ) {
 			if ( wp.blocks ) {
-				// Unregister the Gutenberg Block as it doesn\'t work for self embeds.
 				wp.blocks.unregisterBlockType( \'core-embed/wordpress\' );
 			}
 		} )( window.wp || {} );
 		',
 		'after'
 	);
+
+	// Make sure the wp-embed.js script is loaded once.
+	wp_enqueue_script( 'wp-embed' );
 }
 add_action( 'enqueue_block_editor_assets', 'gutenblocks_editor' );
 
@@ -553,3 +560,46 @@ function gutenblocks_load_textdomain() {
 	load_plugin_textdomain( $g->domain, false, trailingslashit( basename( $g->dir ) ) . 'languages' );
 }
 add_action( 'plugins_loaded', 'gutenblocks_load_textdomain', 9 );
+
+if ( ! function_exists( 'gutenberg_filter_oembed_result' ) ) :
+/**
+ * Make sure the data-secret Attribute is added to the WordPress embed html response.
+ *
+ * There's a Pull Request fixing this issue that is still under review.
+ * @see https://github.com/WordPress/gutenberg/pull/4226
+ *
+ * @since 1.1.1
+ *
+ * @param  WP_HTTP_Response|WP_Error $response The REST Request response.
+ * @param  WP_REST_Server            $handler  ResponseHandler instance (usually WP_REST_Server).
+ * @param  WP_REST_Request           $request  Request used to generate the response.
+ * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
+ */
+function gutenblocks_filter_oembed_result( $response, $handler, $request ) {
+	if ( 'GET' !== $request->get_method() || ! $request->get_param( 'url' ) ) {
+		return $response;
+	}
+
+	if ( is_wp_error( $response ) && 'oembed_invalid_url' !== $response->get_error_code() ) {
+		return $response;
+	}
+
+	$rest_route = $request->get_route();
+	if ( '/oembed/1.0/proxy' !== $rest_route && '/oembed/1.0/embed' !== $rest_route ) {
+		return $response;
+	}
+
+	// Make sure the response is an object.
+	$embed_response = (object) $response;
+
+	if ( ! isset( $embed_response->html ) || ! preg_match( '/wp-embedded-content/', wp_unslash( $embed_response->html ) ) ) {
+		return $response;
+	}
+
+	$embed_response->html = wp_filter_oembed_result( $embed_response->html, $embed_response, $request->get_param( 'url' ) );
+
+	return $embed_response;
+}
+add_filter( 'rest_request_after_callbacks', 'gutenblocks_filter_oembed_result', 10, 3 );
+
+endif;

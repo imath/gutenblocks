@@ -8,8 +8,7 @@
 /* global gutenBlocksStrings, wpApiSettings */
 ( function( wp ) {
 	var el                = wp.element.createElement,
-	    registerBlockType = wp.blocks.registerBlockType,
-	    SandBox           = wp.components.SandBox;
+	    registerBlockType = wp.blocks.registerBlockType;
 
 	registerBlockType( 'gutenblocks/wp-embed', {
 
@@ -134,14 +133,14 @@
 				) );
 			}
 
-			// Output the gist using a SandBox.
+			// Output the WordPress embed.
 			return el( 'figure', {
-				key:       'wp-embed-sandbox',
+				key:       'wp-embed-output',
 				className: 'wp-block-embed'
 			}, el(
-				SandBox, {
-					title: props.attributes.title,
-					html:  props.attributes.html
+				'div', {
+					className:               'wp-block-embed__wrapper',
+					dangerouslySetInnerHTML: { __html: props.attributes.html }
 				} )
 			);
 		},
