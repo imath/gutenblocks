@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.1.1
+
++ _Requires Gutenberg & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Make sure all blocks are registered before trying to unregister one.
+- Untill WordPress/gutenberg#4226 is fixed, make sure the data-secret mechanism is also applied to WordPress embeds in the Gutenberg editor.
+
+### Props
+
+@TweetPressFr
+
+---
+
 ## 1.1.0
 
 + _Requires Gutenberg & WordPress 4.9_
