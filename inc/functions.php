@@ -336,7 +336,7 @@ function gutenblocks_editor() {
 	 * @see https://github.com/WordPress/gutenberg/pull/4226
 	 */
 	wp_add_inline_script(
-		'wp-editor',
+		'wp-edit-post',
 		'
 		( function( wp ) {
 			if ( wp.blocks ) {
