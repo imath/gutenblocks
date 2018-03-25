@@ -68,6 +68,17 @@ function gutenblocks_min_suffix() {
 }
 
 /**
+ * Checks if the Core WP Embed block is fixed.
+ *
+ * @since  1.1.2
+ *
+ * @return boolean True if fixed, false otherwise.
+ */
+function gutenblocks_wp_embed_is_fixed() {
+	return function_exists( 'gutenberg_filter_oembed_result' );
+}
+
+/**
  * Registers JavaScripts and Styles.
  *
  * @since 1.0.0
@@ -88,15 +99,18 @@ function gutenblocks_register_scripts() {
 			'location' => sprintf( '%1$sblocks/gist%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
 		),
-		'gutenblocks-wp-embed' => array(
-			'location' => sprintf( '%1$sblocks/wp-embed%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
-		),
 		'gutenblocks-release' => array(
 			'location' => sprintf( '%1$sblocks/release%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
 		),
 	), $url, $min, $v );
+
+	if ( ! gutenblocks_wp_embed_is_fixed() ) {
+		$scripts['gutenblocks-wp-embed'] = array(
+			'location' => sprintf( '%1$sblocks/wp-embed%2$s.js', $url, $min ),
+			'deps'     => array( 'wp-blocks', 'wp-element' ),
+		);
+	}
 
 	foreach ( $scripts as $js_handle => $script ) {
 		$in_footer = false;
@@ -280,7 +294,7 @@ function gutenblocks_gist_handler( $matches, $attr, $url, $rawattr ) {
  * @return  array The GutenBlocks l10n strings.
  */
 function gutenblocks_l10n() {
-	return array(
+	$g_l10n = array(
 		'photo' => array(
 			'title'              => _x( 'Photo (URL)',          'Photo Block Title',   'gutenblocks' ),
 			'inputPlaceholder'   => _x( 'URL de la photo…',     'Photo Block Input',   'gutenblocks' ),
@@ -308,6 +322,12 @@ function gutenblocks_l10n() {
 			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
 		),
 	);
+
+	if ( gutenblocks_wp_embed_is_fixed() ) {
+		unset( $g_l10n['wp_embed'] );
+	}
+
+	return $g_l10n;
 }
 
 /**
@@ -319,9 +339,32 @@ function gutenblocks_editor() {
 	$blocks = array(
 		'gutenblocks-photo',
 		'gutenblocks-gist',
-		'gutenblocks-wp-embed',
 		'gutenblocks-release',
 	);
+
+	if ( ! gutenblocks_wp_embed_is_fixed() ) {
+		$blocks[] = 'gutenblocks-wp-embed';
+
+		/**
+		 * Unregister the Gutenberg Block as it doesn't work for self embeds.
+		 *
+		 * @see https://github.com/WordPress/gutenberg/pull/4226
+		 */
+		wp_add_inline_script(
+			'wp-edit-post',
+			'
+			( function( wp ) {
+				if ( wp.blocks ) {
+					wp.blocks.unregisterBlockType( \'core-embed/wordpress\' );
+				}
+			} )( window.wp || {} );
+			',
+			'after'
+		);
+
+		// Make sure the wp-embed.js script is loaded once.
+		wp_enqueue_script( 'wp-embed' );
+	}
 
 	foreach ( $blocks as $block ) {
 		wp_enqueue_script( $block );
@@ -329,26 +372,6 @@ function gutenblocks_editor() {
 
 	$handle = reset( $blocks );
 	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
-
-	/**
-	 * Unregister the Gutenberg Block as it doesn't work for self embeds.
-	 *
-	 * @see https://github.com/WordPress/gutenberg/pull/4226
-	 */
-	wp_add_inline_script(
-		'wp-edit-post',
-		'
-		( function( wp ) {
-			if ( wp.blocks ) {
-				wp.blocks.unregisterBlockType( \'core-embed/wordpress\' );
-			}
-		} )( window.wp || {} );
-		',
-		'after'
-	);
-
-	// Make sure the wp-embed.js script is loaded once.
-	wp_enqueue_script( 'wp-embed' );
 }
 add_action( 'enqueue_block_editor_assets', 'gutenblocks_editor' );
 
