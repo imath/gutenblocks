@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.2
+
++ _Requires Gutenberg & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Remove the WordPress Embeds Gutenblock when Gutenberg version is upper than 2.3.0.
+- Stop using the Gutenberg Editable component now it has been deprecated.
+
 ## 1.1.1
 
 + _Requires Gutenberg & WordPress 4.9_
