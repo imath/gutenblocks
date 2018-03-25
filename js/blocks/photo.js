@@ -11,7 +11,7 @@
 	    registerBlockType = wp.blocks.registerBlockType,
 	    BlockControls     = wp.blocks.BlockControls,
 	    AlignmentToolbar  = wp.blocks.AlignmentToolbar,
-	    Editable          = wp.blocks.Editable,
+	    RichText          = wp.blocks.RichText,
 	    EditToolbar       = wp.components.Toolbar;
 
 	registerBlockType( 'gutenblocks/photo', {
@@ -156,7 +156,7 @@
 								}
 							),
 							el(
-								Editable, {
+								RichText, {
 									key:        'photo-caption',
 									tagName:    'figcaption',
 									placeholder: gutenBlocksStrings.photo.captionPlaceholder,
