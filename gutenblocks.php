@@ -3,7 +3,7 @@
  * Plugin Name: GutenBlocks
  * Plugin URI: https://imathi.eu/tag/gutenblocks/
  * Description: Ma collection personnelle de blocs Gutenberg.
- * Version: 1.1.2
+ * Version: 1.2.0-alpha
  * Requires at least: 4.9
  * Tested up to: 5.0
  * License: GNU/GPL 2
@@ -68,7 +68,7 @@ final class GutenBlocks {
 	 */
 	private function globals() {
 		// Version
-		$this->version = '1.1.2';
+		$this->version = '1.2.0-alpha';
 
 		// Domain
 		$this->domain = 'gutenblocks';
@@ -83,6 +83,9 @@ final class GutenBlocks {
 		$this->js_url     = trailingslashit( $this->url . 'js' );
 		$this->assets_url = trailingslashit( $this->url . 'assets' );
 		$this->inc_dir    = trailingslashit( $this->dir . 'inc' );
+
+		// Permalinks type
+		$this->pretty_urls = get_option( 'permalink_structure' );
 	}
 
 	/**
@@ -91,7 +94,33 @@ final class GutenBlocks {
 	 * @since 1.0.0
 	 */
 	private function inc() {
+		spl_autoload_register( array( $this, 'autoload' ) );
+
 		require $this->inc_dir . 'functions.php';
+	}
+
+	/**
+	 * Class Autoload function
+	 *
+	 * @since  1.2.0
+	 *
+	 * @param  string $class The class name.
+	 */
+	public function autoload( $class ) {
+		$name = str_replace( '_', '-', strtolower( $class ) );
+
+		if ( false === strpos( $name, $this->domain ) ) {
+			return;
+		}
+
+		$path = $this->inc_dir . "classes/{$name}.php";
+
+		// Sanity check.
+		if ( ! file_exists( $path ) ) {
+			return;
+		}
+
+		require $path;
 	}
 }
 
