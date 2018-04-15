@@ -113,6 +113,22 @@ function gutenblocks_get_languages() {
 }
 
 /**
+ * Is the given string a locale ?
+ *
+ * @since  1.2.0
+ *
+ * @param  string $locale A potential locale string
+ * @return boolean        True if it's a locale. False otherwise.
+ */
+function gutenblocks_is_locale( $locale = '' ) {
+	if ( $locale && in_array( $locale, gutenblocks_get_languages(), true ) ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Adds a Flag to inform about the i18n Block language being edited
  *
  * @since  1.2.0
@@ -517,6 +533,7 @@ function gutenblocks_github_release_icon( $name = 'default_icon' ) {
  * Dynamic GutenBlock's GitHub Release callback.
  *
  * @since 1.1.0
+ * @since 1.2.0 Add a layout class if used within a nested block.
  *
  * @param  array $attributes The GutenBlock attributes.
  * @return string            The content to output on front-end
@@ -591,6 +608,21 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 	$release_url  = sprintf( 'https://github.com/imath/%1$s/releases/tag/%2$s', $name, $tag );
 	$download_url = sprintf( 'https://github.com/imath/%1$s/releases/download/%2$s/%1$s.zip', $name, $tag );
 
+	$container_class = 'plugin-card';
+
+	if ( isset( $a['layout'] ) && $a['layout'] ) {
+		$container_class .= ' layout-' . $a['layout'];
+
+		$locale = str_replace( 'row-', '', $a['layout'] );
+		if ( gutenblocks_is_locale( $locale ) && $locale !== get_locale() && $locale === gutenblocks_get_locale() ) {
+			switch_to_locale( $locale );
+
+			if ( ! is_textdomain_loaded( 'gutenblocks' ) ) {
+				gutenblocks_load_textdomain();
+			}
+		}
+	}
+
 	$count = '';
 	if ( isset( $release_data->downloads ) ) {
 		$count = sprintf( '<p class="description">%s</p>',
@@ -611,29 +643,18 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		$count  = sprintf( '<p class="description">%s</p>', wp_kses( $notes, array( 'br' => true ) ) ) ."\n" . $count;
 	}
 
-	return sprintf( '
-		<div class="plugin-card">
-			<div class="plugin-card-top">
-				<div class="name column-name">
-					<h3>
-						<a href="%1$s">
-							%2$s
-							%3$s
-						</a>
-					</h3>
-				</div>
-				<div class="desc column-description">
+	$output = sprintf( '<div class="%1$s">
+	<div class="plugin-card-top">
+		<div class="name column-name">
+			<h3>
+				<a href="%2$s">
+					%3$s
 					%4$s
-					<p class="description"><a href="%5$s" target="_blank">%6$s</a></p>
-				</div>
-				<div class="download">
-					<button class="button submit gh-download-button">
-						<img src="%7$s" class="gh-release-download-icon">
-						<a href="%1$s">%8$s</a>
-					</button>
-				</div>
-			</div>
-		</div>',
+				</a>
+			</h3>
+		</div>
+		<div class="desc column-description">%5$s<p class="description"><a href="%6$s" target="_blank">%7$s</a></p></div><div class="download"><button class="button submit gh-download-button"><img src="%8$s" class="gh-release-download-icon"><a href="%2$s">%9$s</a></button></div></div></div>',
+		$container_class,
 		esc_url( $download_url ),
 		$logo,
 		$label,
@@ -643,6 +664,12 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		gutenblocks_github_release_icon( 'download_icon' ),
 		sprintf( esc_html__( 'Télécharger la version %s', 'gutenblocks' ), $tag )
 	);
+
+	if ( is_locale_switched() ) {
+		restore_current_locale();
+	}
+
+	return $output;
 }
 
 /**
@@ -876,6 +903,24 @@ function gutenblocks_get_language_switcher( $current = '' ) {
 }
 
 /**
+ * Gets the locale for GutenBlocks.
+ *
+ * @since  1.2.0
+ *
+ * @return string The locale for GutenBlocks.
+ */
+function gutenblocks_get_locale() {
+	$locale = get_locale();
+	$qv     = gutenblocks_get_locale_from_slug( get_query_var( 'translate' ) );
+
+	if ( $qv ) {
+		$locale = $qv;
+	}
+
+	return $locale;
+}
+
+/**
  * Returns a locale out of a language slug.
  *
  * @since  1.2.0
@@ -950,12 +995,7 @@ function gutenblocks_translate_blocks( $content = '' ) {
 	preg_match_all( '/\<section class\=\"wp-block-gutenblocks-i18n\"\>([\s\S]*?)\<\/section\>/', $content, $matches );
 
 	if ( $matches[1] ) {
-		$locale = get_locale();
-		$qv     = gutenblocks_get_locale_from_slug( get_query_var( 'translate' ) );
-
-		if ( $qv ) {
-			$locale = $qv;
-		}
+		$locale = gutenblocks_get_locale();
 
 		foreach ( $matches[1] as $k => $m ) {
 			preg_match_all( '/\<[^<]* class\=\".*layout-row-' . $locale . '\"[^<>]*\>([\s\S]*?)\<\/[^>]*\>[^\r\n]+/', $m, $innerblocks );
