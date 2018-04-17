@@ -227,7 +227,7 @@ function gutenblocks_register_scripts() {
 	} else {
 		wp_localize_script( 'gutenblocks-i18n', 'gutenblocksI18n', array(
 			'languages' => $languages,
-			'title'     => _x( 'Translateur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+			'title'     => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
 		) );
 
 		if ( ! wp_doing_ajax() ) {

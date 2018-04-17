@@ -19,7 +19,7 @@
 		// Block Category
 		category: 'layout',
 
-		edit: function( props ) {
+		edit: function() {
             // Output the rows of languages.
 			return el( 'section', {
                 className: 'gutenblocks-i18n'
