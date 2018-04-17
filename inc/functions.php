@@ -644,16 +644,29 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 	}
 
 	$output = sprintf( '<div class="%1$s">
-	<div class="plugin-card-top">
-		<div class="name column-name">
-			<h3>
-				<a href="%2$s">
-					%3$s
-					%4$s
-				</a>
-			</h3>
-		</div>
-		<div class="desc column-description">%5$s<p class="description"><a href="%6$s" target="_blank">%7$s</a></p></div><div class="download"><button class="button submit gh-download-button"><img src="%8$s" class="gh-release-download-icon"><a href="%2$s">%9$s</a></button></div></div></div>',
+			<div class="plugin-card-top">
+				<div class="name column-name">
+					<h3>
+						<a href="%2$s">
+							%3$s
+							%4$s
+						</a>
+					</h3>
+				</div>
+				<div class="desc column-description">
+					%5$s
+					<p class="description">
+						<a href="%6$s" target="_blank">%7$s</a>
+					</p>
+				</div>
+				<div class="download">
+					<button class="button submit gh-download-button">
+						<img src="%8$s" class="gh-release-download-icon">
+						<a href="%2$s">%9$s</a>
+					</button>
+				</div>
+			</div>
+		</div>',
 		$container_class,
 		esc_url( $download_url ),
 		$logo,
@@ -998,12 +1011,34 @@ function gutenblocks_translate_blocks( $content = '' ) {
 		$locale = gutenblocks_get_locale();
 
 		foreach ( $matches[1] as $k => $m ) {
-			preg_match_all( '/\<[^<]* class\=\".*layout-row-' . $locale . '\"[^<>]*\>([\s\S]*?)\<\/[^>]*\>[^\r\n]+/', $m, $innerblocks );
+			$blocks = gutenberg_parse_blocks( $m );
 
-			$content = str_replace( $matches[0][ $k ], sprintf(
-				'<section class="wp-block-gutenblocks-i18n">%s</section>',
-				join( $innerblocks[0], "\n" )
-			), $content );
+			foreach( $blocks as $block ) {
+				if ( empty( $block['attrs']['layout'] ) || 'row-' . $locale === $block['attrs']['layout'] ) {
+					continue;
+				}
+
+				// Remove all other languages blocks' content.
+				$content   = str_replace( $block['innerHTML'], '', $content );
+				$blockname = str_replace( '/', '\/',
+					str_replace( 'core/', '(?:core/)?',
+						preg_quote( $block['blockName'] )
+					)
+				);
+
+				$footprint = (
+					'/<!--\s+wp:(' .
+					$blockname .
+					')(\s+(\{.*' .
+					$block['attrs']['layout'] .
+					'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
+					$blockname .
+					'\s+--\>|\/--\>)/'
+				);
+
+				// Remove remaining HTML comments.
+				$content = preg_replace( $footprint, '', $content, 1 );
+			}
 		}
 
 		if ( ! is_front_page() ) {
@@ -1018,7 +1053,7 @@ function gutenblocks_translate_blocks( $content = '' ) {
 
 	return $content;
 }
-add_filter( 'the_content', 'gutenblocks_translate_blocks', 20 );
+add_filter( 'the_content', 'gutenblocks_translate_blocks', 8 );
 
 /**
  * Get the locale out of the URI and switch the site's one if needed.
