@@ -79,9 +79,95 @@ function gutenblocks_wp_embed_is_fixed() {
 }
 
 /**
+ * Are permalinks pretty ?
+ *
+ * @since  1.2.0
+ *
+ * @return boolean True if permalinks are pretty. False otherwise.
+ */
+function gutenblocks_are_urls_pretty() {
+	return !! gutenblocks()->pretty_urls;
+}
+
+/**
+ * Get the available locales.
+ *
+ * @since  1.2.0
+ *
+ * @return boolean|array False if no other locales than en_US, the list of locales otherwise.
+ */
+function gutenblocks_get_languages() {
+	$languages = get_available_languages();
+	$locale    = get_locale();
+
+	if ( ! $languages ) {
+		return false;
+	}
+
+	$default = array( 'en_US' );
+	if ( 'en_US' !== $locale ) {
+		array_unshift( $default, $locale );
+	}
+
+	return array_unique( array_merge( $default, $languages ) );
+}
+
+/**
+ * Is the given string a locale ?
+ *
+ * @since  1.2.0
+ *
+ * @param  string $locale A potential locale string
+ * @return boolean        True if it's a locale. False otherwise.
+ */
+function gutenblocks_is_locale( $locale = '' ) {
+	if ( $locale && in_array( $locale, gutenblocks_get_languages(), true ) ) {
+		return true;
+	}
+
+	return false;
+}
+
+/**
+ * Adds a Flag to inform about the i18n Block language being edited
+ *
+ * @since  1.2.0
+ *
+ * @param  array  $languages The list of available locales.
+ * @return string            Inline style.
+ */
+function gutenblocks_style_languages( $languages = array() ) {
+	$flag_master = new GutenBlocks_flagMaster;
+
+	$style = '';
+	foreach( $languages as $language ) {
+		$style .= sprintf( '
+			body.wp-admin [data-type="gutenblocks/i18n"] .layout-row-%1$s {
+				position: relative;
+				margin-bottom: 10px;
+			}
+
+			body.wp-admin [data-type="gutenblocks/i18n"] .layout-row-%1$s:before {
+				content: "%2$s";
+				position: absolute;
+				top: -12px;
+				left: 10px;
+			}
+
+			.gutenblocks-i18n-switcher li.nav-%1$s a:before {
+				content: "%2$s";
+			}
+		%3$s', $language, $flag_master::emojiFlag( strtolower( substr( $language, -2 ) ) ), "\n" );
+	}
+
+	return $style;
+}
+
+/**
  * Registers JavaScripts and Styles.
  *
  * @since 1.0.0
+ * @since 1.2.0 Register the editor script for the i18n Block.
  */
 function gutenblocks_register_scripts() {
 	$min = gutenblocks_min_suffix();
@@ -101,6 +187,10 @@ function gutenblocks_register_scripts() {
 		),
 		'gutenblocks-release' => array(
 			'location' => sprintf( '%1$sblocks/release%2$s.js', $url, $min ),
+			'deps'     => array( 'wp-blocks', 'wp-element' ),
+		),
+		'gutenblocks-i18n' => array(
+			'location' => sprintf( '%1$sblocks/i18n%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
 		),
 	), $url, $min, $v );
@@ -129,6 +219,21 @@ function gutenblocks_register_scripts() {
 		array( 'wp-blocks' ),
 		$v
 	);
+
+	$languages = gutenblocks_get_languages();
+
+	if ( ! $languages ) {
+		wp_deregister_script( 'gutenblocks-i18n' );
+	} else {
+		wp_localize_script( 'gutenblocks-i18n', 'gutenblocksI18n', array(
+			'languages' => $languages,
+			'title'     => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+		) );
+
+		if ( ! wp_doing_ajax() ) {
+			wp_add_inline_style( 'gutenblocks', gutenblocks_style_languages( $languages ) );
+		}
+	}
 }
 add_action( 'init', 'gutenblocks_register_scripts', 12 );
 
@@ -428,6 +533,7 @@ function gutenblocks_github_release_icon( $name = 'default_icon' ) {
  * Dynamic GutenBlock's GitHub Release callback.
  *
  * @since 1.1.0
+ * @since 1.2.0 Add a layout class if used within a nested block.
  *
  * @param  array $attributes The GutenBlock attributes.
  * @return string            The content to output on front-end
@@ -502,6 +608,21 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 	$release_url  = sprintf( 'https://github.com/imath/%1$s/releases/tag/%2$s', $name, $tag );
 	$download_url = sprintf( 'https://github.com/imath/%1$s/releases/download/%2$s/%1$s.zip', $name, $tag );
 
+	$container_class = 'plugin-card';
+
+	if ( isset( $a['layout'] ) && $a['layout'] ) {
+		$container_class .= ' layout-' . $a['layout'];
+
+		$locale = str_replace( 'row-', '', $a['layout'] );
+		if ( gutenblocks_is_locale( $locale ) && $locale !== get_locale() && $locale === gutenblocks_get_locale() ) {
+			switch_to_locale( $locale );
+
+			if ( ! is_textdomain_loaded( 'gutenblocks' ) ) {
+				gutenblocks_load_textdomain();
+			}
+		}
+	}
+
 	$count = '';
 	if ( isset( $release_data->downloads ) ) {
 		$count = sprintf( '<p class="description">%s</p>',
@@ -522,29 +643,31 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		$count  = sprintf( '<p class="description">%s</p>', wp_kses( $notes, array( 'br' => true ) ) ) ."\n" . $count;
 	}
 
-	return sprintf( '
-		<div class="plugin-card">
+	$output = sprintf( '<div class="%1$s">
 			<div class="plugin-card-top">
 				<div class="name column-name">
 					<h3>
-						<a href="%1$s">
-							%2$s
+						<a href="%2$s">
 							%3$s
+							%4$s
 						</a>
 					</h3>
 				</div>
 				<div class="desc column-description">
-					%4$s
-					<p class="description"><a href="%5$s" target="_blank">%6$s</a></p>
+					%5$s
+					<p class="description">
+						<a href="%6$s" target="_blank">%7$s</a>
+					</p>
 				</div>
 				<div class="download">
 					<button class="button submit gh-download-button">
-						<img src="%7$s" class="gh-release-download-icon">
-						<a href="%1$s">%8$s</a>
+						<img src="%8$s" class="gh-release-download-icon">
+						<a href="%2$s">%9$s</a>
 					</button>
 				</div>
 			</div>
 		</div>',
+		$container_class,
 		esc_url( $download_url ),
 		$logo,
 		$label,
@@ -554,12 +677,19 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		gutenblocks_github_release_icon( 'download_icon' ),
 		sprintf( esc_html__( 'Télécharger la version %s', 'gutenblocks' ), $tag )
 	);
+
+	if ( is_locale_switched() ) {
+		restore_current_locale();
+	}
+
+	return $output;
 }
 
 /**
  * Register dynamic Gutenberg blocks.
  *
  * @since  1.1.0
+ * @since  1.2.0 Register the i18n Block
  */
 function gutenblocks_register_dynamic_blocks() {
 	if ( ! function_exists( 'register_block_type' ) ) {
@@ -569,8 +699,14 @@ function gutenblocks_register_dynamic_blocks() {
 	register_block_type( 'gutenblocks/release', array(
 		'render_callback' => 'gutenblocks_github_release_callback',
 	) );
+
+	if ( wp_scripts()->query( 'gutenblocks-i18n' ) ) {
+		register_block_type( 'gutenblocks/i18n', array(
+			'editor_script' => 'gutenblocks-i18n',
+		) );
+	}
 }
-add_action( 'init', 'gutenblocks_register_dynamic_blocks' );
+add_action( 'init', 'gutenblocks_register_dynamic_blocks', 20 );
 
 /**
  * Loads translation.
@@ -626,3 +762,364 @@ function gutenblocks_filter_oembed_result( $response, $handler, $request ) {
 add_filter( 'rest_request_after_callbacks', 'gutenblocks_filter_oembed_result', 10, 3 );
 
 endif;
+
+/**
+ * Add rewrite rules for Post and Page translations.
+ *
+ * @since 1.2.0
+ */
+function gutenblocks_translate_rewrite_rules() {
+	global $wp_rewrite;
+
+	add_rewrite_tag(
+		'%translate%',
+		'([^/]+)'
+	);
+
+	$patterns = array(
+		'/%year%/%monthnum%' => array(
+			'pattern' => '([0-9]{4})/([0-9]{1,2})/',
+			'query'   => '?year=$matches[1]&monthnum=$matches[2]&name=$matches[3]&translate=$matches[4]',
+		),
+		'/%year%/%monthnum%/%day%' => array(
+			'pattern' => '([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})/',
+			'query'   => '?year=$matches[1]&monthnum=$matches[2]&day=$matches[3]&name=$matches[4]&translate=$matches[5]',
+		),
+		'/archives/%post_id%' => array(
+			'pattern' => 'archives/',
+			'query'   => '?p=$matches[1]&translate=$matches[2]',
+		),
+	);
+
+	$permalink_structure = rtrim( str_replace( '%postname%/', '', $wp_rewrite->permalink_structure ), '/' );
+	if ( isset( $patterns[ $permalink_structure ] )  ) {
+		$post_base  = $patterns[ $permalink_structure ]['pattern'] . '([^/]+)/';
+		$post_query = $patterns[ $permalink_structure ]['query'];
+	} else {
+		$post_base  = '(.?.+?)/';
+		$post_query = '?name=$matches[1]&translate=$matches[2]';
+	}
+
+	$rewrite_rules = array(
+		// Page
+		'([^/]+)/translate/?([^/]+)/?$'       => '?pagename=$matches[1]&translate=$matches[2]',
+		'([^/]+)/translate/?([^/]+)/embed/?$' => '?pagename=$matches[1]&translate=$matches[2]&embed=true',
+		// Post
+		$post_base . 'translate/?([^/]+)/?$'       => $post_query,
+		$post_base . 'translate/?([^/]+)/embed/?$' => $post_query . '&embed=true',
+	);
+
+	foreach ( $rewrite_rules as $regex => $rewrite_rule ) {
+		add_rewrite_rule(
+			$regex,
+			$wp_rewrite->index . $rewrite_rule,
+			'top'
+		);
+	}
+}
+add_action( 'init', 'gutenblocks_translate_rewrite_rules' );
+
+/**
+ * Perform some upgrade tasks if needed.
+ *
+ * @since  1.2.0
+ */
+function gutenblocks_upgrade() {
+	$db_version = get_option( 'gutenblocks_version', 0 );
+	$version    = gutenblocks_version();
+
+	if ( ! version_compare( $db_version, $version, '<' ) ) {
+		return;
+	}
+
+	if ( (float) $db_version < 1.2 ) {
+		delete_option( 'rewrite_rules' );
+		flush_rewrite_rules( false );
+	}
+
+	// Update version.
+	update_option( 'gutenblocks_version', $version );
+}
+add_action( 'admin_init', 'gutenblocks_upgrade', 100 );
+
+/**
+ * Build a page or post link to its translated version.
+ *
+ * @since  1.2.0
+ *
+ * @param  string $link     The permalink of the Post or the Page.
+ * @param  string $language The locale of the translated version.
+ * @return string           The link to display the translated version.
+ */
+function gutenblocks_translate_post_link( $link = '', $language = '' ) {
+	if ( ! $language ) {
+		$language = strtolower( str_replace( '_', '-', get_locale() ) );
+	}
+
+	if ( gutenblocks_are_urls_pretty() ) {
+		$link = trailingslashit( $link ) . 'translate/' . $language . '/';
+	} else {
+		$link = add_query_arg( 'translate', $language, $link );
+	}
+
+	return $link;
+}
+
+/**
+ * Build the language switcher on singular templates.
+ *
+ * @since  1.2.0
+ *
+ * @param  string $current The current locale to use for the blocks.
+ * @return string          HTML Output.
+ */
+function gutenblocks_get_language_switcher( $current = '' ) {
+	$locales     = gutenblocks_get_languages();
+	$site_locale = get_locale();
+
+	if ( ! $locales || ! did_action( 'wp_head' ) || ! is_singular() ) {
+		return;
+	}
+
+	if ( ! $current ) {
+		$current = $site_locale;
+	}
+
+	$switcher = '<ul class="gutenblocks-i18n-switcher">';
+
+	foreach ( $locales as $locale ) {
+		$class = '';
+		if ( $current === $locale ) {
+			$class = ' current-locale';
+		}
+
+		$link     = get_permalink();
+		$language = strtolower( str_replace( '_', '-', $locale ) );
+
+		if ( $site_locale !== $locale ) {
+			$link = gutenblocks_translate_post_link( $link, $language );
+		}
+
+		$switcher .= sprintf( '<li class="nav-%1$s%2$s">
+			<a href="%3$s">
+				<span class="screen-reader-text">%4$s</span></a>
+			</li>%5$s',
+			$locale,
+			$class,
+			$link,
+			$locale,
+			"\n"
+		);
+	}
+
+	return $switcher .= "</ul>\n";
+}
+
+/**
+ * Gets the locale for GutenBlocks.
+ *
+ * @since  1.2.0
+ *
+ * @return string The locale for GutenBlocks.
+ */
+function gutenblocks_get_locale() {
+	$locale = get_locale();
+	$qv     = gutenblocks_get_locale_from_slug( get_query_var( 'translate' ) );
+
+	if ( $qv ) {
+		$locale = $qv;
+	}
+
+	return $locale;
+}
+
+/**
+ * Returns a locale out of a language slug.
+ *
+ * @since  1.2.0
+ *
+ * @param  string $slug   The language slug.
+ * @return boolean|string False if no locale was found. The locale otherwise.
+ */
+function gutenblocks_get_locale_from_slug( $slug = '' ) {
+	if ( ! $slug ) {
+		return false;
+	}
+
+	$country = substr( $slug, -2 );
+	$locale = str_replace( '-' . $country, '_' . strtoupper( $country ), $slug );
+
+	if ( false !== array_search( $locale, gutenblocks_get_languages() ) ) {
+		return $locale;
+	}
+
+	return false;
+}
+
+/**
+ * Returns the locale out of a URI.
+ *
+ * @since  1.2.0
+ *
+ * @param  string $uri    The URI to get the locale from.
+ * @return boolean|string False if no locale was found. The locale otherwise.
+ */
+function gutenblocks_get_locale_from_uri( $uri = '' ) {
+	if ( ! $uri ) {
+		$uri = $_SERVER['REQUEST_URI'];
+	}
+
+	$parts        = wp_parse_url( $uri );
+	$needs_switch = false;
+
+	if ( gutenblocks_are_urls_pretty() ) {
+		$path    = explode( '/', trim( $parts['path'], '/' ) );
+		$t_index = array_search( 'translate', $path );
+
+		if ( false !== $t_index ) {
+			$needs_switch = $path[ $t_index + 1 ];
+		}
+	} else {
+		$q = wp_parse_args( $parts['query'], array(
+			'translate' => false,
+		) );
+
+		if ( $q['translate'] ) {
+			$needs_switch = $q['translate'];
+		}
+	}
+
+	return gutenblocks_get_locale_from_slug( $needs_switch );
+}
+
+/**
+ * Only keeps the current locale version of the i18n Block.
+ *
+ * @since 1.2.0
+ *
+ * @param  string $content The Post content.
+ * @return string          The Post content for the current locale.
+ */
+function gutenblocks_translate_blocks( $content = '' ) {
+	if ( is_admin() && ! wp_doing_ajax() ) {
+		return $content;
+	}
+
+	preg_match_all( '/\<section class\=\"wp-block-gutenblocks-i18n\"\>([\s\S]*?)\<\/section\>/', $content, $matches );
+
+	if ( $matches[1] ) {
+		$locale = gutenblocks_get_locale();
+
+		foreach ( $matches[1] as $k => $m ) {
+			$blocks = gutenberg_parse_blocks( $m );
+
+			foreach( $blocks as $block ) {
+				if ( empty( $block['attrs']['layout'] ) || 'row-' . $locale === $block['attrs']['layout'] ) {
+					continue;
+				}
+
+				// Remove all other languages blocks' content.
+				$content   = str_replace( $block['innerHTML'], '', $content );
+				$blockname = str_replace( '/', '\/',
+					str_replace( 'core/', '(?:core/)?',
+						preg_quote( $block['blockName'] )
+					)
+				);
+
+				$footprint = (
+					'/<!--\s+wp:(' .
+					$blockname .
+					')(\s+(\{.*' .
+					$block['attrs']['layout'] .
+					'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
+					$blockname .
+					'\s+--\>|\/--\>)/'
+				);
+
+				// Remove remaining HTML comments.
+				$content = preg_replace( $footprint, '', $content, 1 );
+			}
+		}
+
+		if ( ! is_front_page() ) {
+			$content = gutenblocks_get_language_switcher( $locale ) . $content;
+		}
+
+		if ( is_embed() && preg_match( '/\<span id\=\"more-\d*\"\>\<\/span\>/', $content, $more_matches ) ) {
+			$teaser  = explode( $more_matches[0], $content, 2 );
+			$content = reset( $teaser );
+		}
+	}
+
+	return $content;
+}
+add_filter( 'the_content', 'gutenblocks_translate_blocks', 8 );
+
+/**
+ * Get the locale out of the URI and switch the site's one if needed.
+ *
+ * @since  1.2.0
+ *
+ * @param  string $url The requested URL.
+ */
+function gutenblocks_oembed_add_translate_filters( $url = '' ) {
+	$locale = gutenblocks_get_locale_from_uri( $url );
+
+	if ( $locale ) {
+		switch_to_locale( $locale );
+
+		// Make sure Post and Page permalinks are translated.
+		add_filter( 'post_link', 'gutenblocks_translate_post_link', 10, 1 );
+		add_filter( 'page_link', 'gutenblocks_translate_post_link', 10, 1 );
+	}
+}
+add_action( 'embed_content_meta', 'gutenblocks_oembed_add_translate_filters', 9, 0 );
+
+/**
+ * Restore the site's locale & Page and Post permalinks if needed.
+ *
+ * @since 1.2.0
+ */
+function gutenblocks_oembed_remove_translate_filters() {
+	if ( is_locale_switched() ) {
+		remove_filter( 'post_link', 'gutenblocks_translate_post_link', 10, 1 );
+		remove_filter( 'page_link', 'gutenblocks_translate_post_link', 10, 1 );
+		restore_current_locale();
+	}
+}
+add_action( 'embed_footer', 'gutenblocks_oembed_remove_translate_filters', 11 );
+
+/**
+ * Checks if switching locale is required for an embed request.
+ *
+ * @since 1.2.0
+ *
+ * @param  integer $page_id The current post type ID being embedded.
+ * @param  string  $url     The embed url.
+ * @return integer          The current post type ID being embedded.
+ */
+function gutenblocks_oembed_post_request_id( $page_id = 0, $url = '' ) {
+	if ( ! $page_id ) {
+		return $page_id;
+	}
+
+	gutenblocks_oembed_add_translate_filters( $url );
+
+	return $page_id;
+}
+add_filter( 'oembed_request_post_id', 'gutenblocks_oembed_post_request_id', 10, 2 );
+
+/**
+ * Restore the current locale if an embed request needs it.
+ *
+ * @since 1.2.0
+ *
+ * @param  array  $data The embed data.
+ * @return array        The embed data.
+ */
+function gutenblocks_oembed_response_data( $data = array() ) {
+	gutenblocks_oembed_remove_translate_filters();
+
+	return $data;
+}
+add_filter( 'oembed_response_data', 'gutenblocks_oembed_response_data', 11, 1 );

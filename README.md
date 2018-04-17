@@ -19,3 +19,9 @@ This block lets us add GitHub Gists using their URL.
 ![GitHub Release](https://c1.staticflickr.com/5/4589/39434045721_eb7c49a4db_o.png)
 
 This dynamic block will display a Plugin card on your front-end. A link to the 'WordPress ready' zip package of the plugin release will be included (`plugin-name.zip`).
+
+## Dubber
+
+![GitHub Release](https://cldup.com/-TFW45q_3n.png)
+
+An experimental block to use the Gutenberg Blocks API to translate your content.

@@ -186,3 +186,44 @@ body:not(.wp-admin) .plugin-card p.description {
 		margin: 0 auto;
 	}
 }
+
+body.wp-admin [data-type="gutenblocks/i18n"] .editor-block-list__layout {
+	border: dashed 1px #CCC;
+}
+
+body.wp-admin [data-type="gutenblocks/i18n"] .editor-block-list__layout:first-child {
+	border-color: #222;
+}
+
+.gutenblocks-i18n-switcher {
+	width: 100%;
+	height: auto;
+	border-bottom: solid 1px #ddd;
+	padding: 0 !important;
+	margin-bottom: 1.5em !important;
+	text-align: right;
+}
+
+.gutenblocks-i18n-switcher li {
+	list-style: none;
+	display: inline-block;
+	margin: 0 !important;
+}
+
+.gutenblocks-i18n-switcher li:last-child {
+	margin-right: 0.5em !important;
+}
+
+.gutenblocks-i18n-switcher li a {
+	text-decoration: none !important;
+	box-shadow: none !important;
+	padding: 0.5em;
+	padding-bottom: 0.25em;
+	display: block;
+	margin-bottom: -1px;
+}
+
+.gutenblocks-i18n-switcher li.current-locale a {
+	border: solid 1px #ddd;
+	border-bottom-color: #fff;
+}
