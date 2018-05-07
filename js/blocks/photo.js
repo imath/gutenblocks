@@ -51,7 +51,7 @@
 
 		edit: function( props ) {
 			var alignment = props.attributes.alignment,
-			    focus     = props.focus;
+			    focus     = props.isSelected;
 
 			var onChangeAlignment = function( newAlignment ) {
 				props.setAttributes( { alignment: newAlignment } );
