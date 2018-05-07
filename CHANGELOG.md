@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.1
+
++ _Requires Gutenberg 2.8 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Make sure the Alignment toolbar is added to the Photo block controls.
+
+---
+
 ## 1.2.0
 
 + _Requires Gutenberg & WordPress 4.9_
