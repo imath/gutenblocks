@@ -42,7 +42,7 @@
 			caption: {
 				type: 'array',
 				source: 'children',
-				selector: 'figcaption',
+				selector: 'figcaption'
 			},
 			alignment: {
 				type: 'string'

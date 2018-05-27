@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.2
+
++ _Requires Gutenberg 2.9.2 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Stop using Gutenberg deprecated functions in blocks.
+- Fix the failing Photo block validation.
+
+---
+
 ## 1.2.1
 
 + _Requires Gutenberg 2.8 & WordPress 4.9_
