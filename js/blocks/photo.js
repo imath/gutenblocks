@@ -9,9 +9,9 @@
 ( function( wp ) {
 	var el                = wp.element.createElement,
 	    registerBlockType = wp.blocks.registerBlockType,
-	    BlockControls     = wp.blocks.BlockControls,
-	    AlignmentToolbar  = wp.blocks.AlignmentToolbar,
-	    RichText          = wp.blocks.RichText,
+	    BlockControls     = wp.editor.BlockControls,
+	    AlignmentToolbar  = wp.editor.AlignmentToolbar,
+	    RichText          = wp.editor.RichText,
 	    EditToolbar       = wp.components.Toolbar;
 
 	registerBlockType( 'gutenblocks/photo', {
@@ -40,9 +40,9 @@
 				type: 'number'
 			},
 			caption: {
-				type:     'string',
-				source:   'children',
-				selector: 'figcaption'
+				type: 'array',
+				source: 'children',
+				selector: 'figcaption',
 			},
 			alignment: {
 				type: 'string'
@@ -213,7 +213,11 @@
 				];
 
 			if ( caption && caption.length > 0 ) {
-				elements.push( el( 'figcaption', { key: 'photo-caption' }, caption ) );
+				elements.push( el( RichText.Content,{
+					tagName:'figcaption',
+					key: 'photo-caption',
+					value: caption
+				} ) );
 			}
 
 			return el(

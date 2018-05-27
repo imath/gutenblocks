@@ -6,7 +6,7 @@
 ( function( wp ) {
 	var el                = wp.element.createElement,
 	    registerBlockType = wp.blocks.registerBlockType,
-	    innerBlocks       = wp.blocks.InnerBlocks;
+	    innerBlocks       = wp.editor.InnerBlocks;
 
 	registerBlockType( 'gutenblocks/i18n', {
 
