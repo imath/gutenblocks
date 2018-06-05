@@ -71,11 +71,13 @@ function gutenblocks_min_suffix() {
  * Checks if the Core WP Embed block is fixed.
  *
  * @since  1.1.2
+ * @deprecated 1.2.3
  *
  * @return boolean True if fixed, false otherwise.
  */
 function gutenblocks_wp_embed_is_fixed() {
-	return function_exists( 'gutenberg_filter_oembed_result' );
+	_deprecated_function( __FUNCTION__, '1.2.3' );
+	return true;
 }
 
 /**
@@ -164,6 +166,41 @@ function gutenblocks_style_languages( $languages = array() ) {
 }
 
 /**
+ * l10n for GutenBlocks.
+ *
+ * @since 1.0.0
+ *
+ * @return  array The GutenBlocks l10n strings.
+ */
+function gutenblocks_l10n() {
+	$g_l10n = array(
+		'photo' => array(
+			'title'              => _x( 'Photo (URL)',          'Photo Block Title',   'gutenblocks' ),
+			'inputPlaceholder'   => _x( 'URL de la photo…',     'Photo Block Input',   'gutenblocks' ),
+			'buttonPlaceholder'  => _x( 'Insérer',              'Photo Block Button',  'gutenblocks' ),
+			'captionPlaceholder' => _x( 'Ajoutez une légende…', 'Photo Block Caption', 'gutenblocks' ),
+			'editBubble'         => _x( 'Modifier',             'Photo Block Bubble',  'gutenblocks' ),
+		),
+		'gist' => array(
+			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
+			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
+			'buttonPlaceholder'  => _x( 'Insérer',      'Gist Block Button', 'gutenblocks' ),
+		),
+		'release' => array(
+			'title'              => _x( 'GitHub Release',        'Release Block Title',        'gutenblocks' ),
+			'namePlaceholder'    => _x( 'Nom du dépôt',          'Release Block Slug',         'gutenblocks' ),
+			'labelPlaceholder'   => _x( 'Nom de l’extension…',   'Release Block Name',         'gutenblocks' ),
+			'tagPlaceholder'     => _x( 'Numéro de version',     'Release Block Tag',          'gutenblocks' ),
+			'notesPlaceholder'   => _x( 'Notes sur la version…', 'Release Block Notes',        'gutenblocks' ),
+			'ghUsername'         => gutenblocks_github_release_get_username(),
+			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
+		),
+	);
+
+	return $g_l10n;
+}
+
+/**
  * Registers JavaScripts and Styles.
  *
  * @since 1.0.0
@@ -195,13 +232,6 @@ function gutenblocks_register_scripts() {
 		),
 	), $url, $min, $v );
 
-	if ( ! gutenblocks_wp_embed_is_fixed() ) {
-		$scripts['gutenblocks-wp-embed'] = array(
-			'location' => sprintf( '%1$sblocks/wp-embed%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
-		);
-	}
-
 	foreach ( $scripts as $js_handle => $script ) {
 		$in_footer = false;
 
@@ -211,6 +241,10 @@ function gutenblocks_register_scripts() {
 
 		wp_register_script( $js_handle, $script['location'], $script['deps'], $v, $in_footer );
 	}
+
+	$handles = array_keys( $scripts );
+	$handle  = reset( $handles );
+	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
 
 	/** Style ****************************************************************/
 
@@ -236,6 +270,39 @@ function gutenblocks_register_scripts() {
 	}
 }
 add_action( 'init', 'gutenblocks_register_scripts', 12 );
+
+/**
+ * Register dynamic Gutenberg blocks.
+ *
+ * @since  1.1.0
+ * @since  1.2.0 Register the i18n Block
+ * @since  1.4.0 Use this function for all blocks.
+ */
+function gutenblocks_register_dynamic_blocks() {
+	if ( ! function_exists( 'register_block_type' ) ) {
+		return false;
+	}
+
+	register_block_type( 'gutenblocks/photo', array(
+		'editor_script' => 'gutenblocks-photo',
+	) );
+
+	register_block_type( 'gutenblocks/gist', array(
+		'editor_script' => 'gutenblocks-gist',
+	) );
+
+	register_block_type( 'gutenblocks/release', array(
+		'render_callback' => 'gutenblocks_github_release_callback',
+		'editor_script'   => 'gutenblocks-release',
+	) );
+
+	if ( wp_scripts()->query( 'gutenblocks-i18n' ) ) {
+		register_block_type( 'gutenblocks/i18n', array(
+			'editor_script' => 'gutenblocks-i18n',
+		) );
+	}
+}
+add_action( 'init', 'gutenblocks_register_dynamic_blocks', 20 );
 
 /**
  * Returns the custom embed providers.
@@ -392,93 +459,14 @@ function gutenblocks_gist_handler( $matches, $attr, $url, $rawattr ) {
 }
 
 /**
- * l10n for GutenBlocks.
- *
- * @since 1.0.0
- *
- * @return  array The GutenBlocks l10n strings.
- */
-function gutenblocks_l10n() {
-	$g_l10n = array(
-		'photo' => array(
-			'title'              => _x( 'Photo (URL)',          'Photo Block Title',   'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL de la photo…',     'Photo Block Input',   'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',              'Photo Block Button',  'gutenblocks' ),
-			'captionPlaceholder' => _x( 'Ajoutez une légende…', 'Photo Block Caption', 'gutenblocks' ),
-			'editBubble'         => _x( 'Modifier',             'Photo Block Bubble',  'gutenblocks' ),
-		),
-		'gist' => array(
-			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',      'Gist Block Button', 'gutenblocks' ),
-		),
-		'wp_embed' => array(
-			'title'              => _x( 'WordPress',         'WP Embed Block Title',  'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL de l’article…', 'WP Embed Block Input',  'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',           'WP Embed Block Button', 'gutenblocks' ),
-		),
-		'release' => array(
-			'title'              => _x( 'GitHub Release',        'Release Block Title',        'gutenblocks' ),
-			'namePlaceholder'    => _x( 'Nom du dépôt',          'Release Block Slug',         'gutenblocks' ),
-			'labelPlaceholder'   => _x( 'Nom de l’extension…',   'Release Block Name',         'gutenblocks' ),
-			'tagPlaceholder'     => _x( 'Numéro de version',     'Release Block Tag',          'gutenblocks' ),
-			'notesPlaceholder'   => _x( 'Notes sur la version…', 'Release Block Notes',        'gutenblocks' ),
-			'ghUsername'         => gutenblocks_github_release_get_username(),
-			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
-		),
-	);
-
-	if ( gutenblocks_wp_embed_is_fixed() ) {
-		unset( $g_l10n['wp_embed'] );
-	}
-
-	return $g_l10n;
-}
-
-/**
  * Enqueues the Gutenberg blocks script.
  *
  * @since 1.0.0
+ * @deprecated 1.2.3
  */
 function gutenblocks_editor() {
-	$blocks = array(
-		'gutenblocks-photo',
-		'gutenblocks-gist',
-		'gutenblocks-release',
-	);
-
-	if ( ! gutenblocks_wp_embed_is_fixed() ) {
-		$blocks[] = 'gutenblocks-wp-embed';
-
-		/**
-		 * Unregister the Gutenberg Block as it doesn't work for self embeds.
-		 *
-		 * @see https://github.com/WordPress/gutenberg/pull/4226
-		 */
-		wp_add_inline_script(
-			'wp-edit-post',
-			'
-			( function( wp ) {
-				if ( wp.blocks ) {
-					wp.blocks.unregisterBlockType( \'core-embed/wordpress\' );
-				}
-			} )( window.wp || {} );
-			',
-			'after'
-		);
-
-		// Make sure the wp-embed.js script is loaded once.
-		wp_enqueue_script( 'wp-embed' );
-	}
-
-	foreach ( $blocks as $block ) {
-		wp_enqueue_script( $block );
-	}
-
-	$handle = reset( $blocks );
-	wp_localize_script( $handle, 'gutenBlocksStrings', gutenblocks_l10n() );
+	_deprecated_function( __FUNCTION__, '1.2.3' );
 }
-add_action( 'enqueue_block_editor_assets', 'gutenblocks_editor' );
 
 /**
  * Enqueues the Gutenberg blocks style.
@@ -686,29 +674,6 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 }
 
 /**
- * Register dynamic Gutenberg blocks.
- *
- * @since  1.1.0
- * @since  1.2.0 Register the i18n Block
- */
-function gutenblocks_register_dynamic_blocks() {
-	if ( ! function_exists( 'register_block_type' ) ) {
-		return false;
-	}
-
-	register_block_type( 'gutenblocks/release', array(
-		'render_callback' => 'gutenblocks_github_release_callback',
-	) );
-
-	if ( wp_scripts()->query( 'gutenblocks-i18n' ) ) {
-		register_block_type( 'gutenblocks/i18n', array(
-			'editor_script' => 'gutenblocks-i18n',
-		) );
-	}
-}
-add_action( 'init', 'gutenblocks_register_dynamic_blocks', 20 );
-
-/**
  * Loads translation.
  *
  * @since 1.0.0
@@ -719,49 +684,6 @@ function gutenblocks_load_textdomain() {
 	load_plugin_textdomain( $g->domain, false, trailingslashit( basename( $g->dir ) ) . 'languages' );
 }
 add_action( 'plugins_loaded', 'gutenblocks_load_textdomain', 9 );
-
-if ( ! function_exists( 'gutenberg_filter_oembed_result' ) ) :
-/**
- * Make sure the data-secret Attribute is added to the WordPress embed html response.
- *
- * There's a Pull Request fixing this issue that is still under review.
- * @see https://github.com/WordPress/gutenberg/pull/4226
- *
- * @since 1.1.1
- *
- * @param  WP_HTTP_Response|WP_Error $response The REST Request response.
- * @param  WP_REST_Server            $handler  ResponseHandler instance (usually WP_REST_Server).
- * @param  WP_REST_Request           $request  Request used to generate the response.
- * @return WP_HTTP_Response|object|WP_Error    The REST Request response.
- */
-function gutenblocks_filter_oembed_result( $response, $handler, $request ) {
-	if ( 'GET' !== $request->get_method() || ! $request->get_param( 'url' ) ) {
-		return $response;
-	}
-
-	if ( is_wp_error( $response ) && 'oembed_invalid_url' !== $response->get_error_code() ) {
-		return $response;
-	}
-
-	$rest_route = $request->get_route();
-	if ( '/oembed/1.0/proxy' !== $rest_route && '/oembed/1.0/embed' !== $rest_route ) {
-		return $response;
-	}
-
-	// Make sure the response is an object.
-	$embed_response = (object) $response;
-
-	if ( ! isset( $embed_response->html ) || ! preg_match( '/wp-embedded-content/', wp_unslash( $embed_response->html ) ) ) {
-		return $response;
-	}
-
-	$embed_response->html = wp_filter_oembed_result( $embed_response->html, $embed_response, $request->get_param( 'url' ) );
-
-	return $embed_response;
-}
-add_filter( 'rest_request_after_callbacks', 'gutenblocks_filter_oembed_result', 10, 3 );
-
-endif;
 
 /**
  * Add rewrite rules for Post and Page translations.
