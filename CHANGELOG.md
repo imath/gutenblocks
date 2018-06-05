@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.3
+
++ _Requires Gutenberg 3.0.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Register all blocks using the `register_block_type()` function.
+- Adapt to Gutenberg 3.0.0 and use the Block icon property as a function when generating a custom one is needed.
+- Get rid of the WP Embed block, it was fixed in Gutenberg a while ago!
+
+---
+
 ## 1.2.2
 
 + _Requires Gutenberg 2.9.2 & WordPress 4.9_
