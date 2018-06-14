@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.4
+
++ _Requires Gutenberg 3.0.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Fix an issue involving the SVG icon of the Github Release bloc.
+
+---
+
 ## 1.2.3
 
 + _Requires Gutenberg 3.0.0 & WordPress 4.9_

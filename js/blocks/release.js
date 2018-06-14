@@ -5,7 +5,25 @@
 /* global gutenBlocksStrings */
 ( function( wp ) {
 	var el                = wp.element.createElement,
-	    registerBlockType = wp.blocks.registerBlockType;
+	    registerBlockType = wp.blocks.registerBlockType,
+	    githubReleaseIcon = el( 'svg', {
+			'aria-hidden': true,
+			role:          'img',
+			key:           'logo-release',
+			className:     'dashicon release-icon',
+			focusable:     'false',
+			width:         '20',
+			height:        '20',
+			viewBox:       '0 0 16 16',
+			stroke:        '#0073aa',
+			strokeWidth:   '0.5',
+			xmlns:         'http://www.w3.org/2000/svg'
+		}, el( 'path',
+				{
+					d: 'M1 4.27v7.47c0 .45.3.84.75.97l6.5 1.73c.16.05.34.05.5 0l6.5-1.73c.45-.13.75-.52.75-.97V4.27c0-.45-.3-.84-.75-.97l-6.5-1.74a1.4 1.4 0 0 0-.5 0L1.75 3.3c-.45.13-.75.52-.75.97zm7 9.09l-6-1.59V5l6 1.61v6.75zM2 4l2.5-.67L11 5.06l-2.5.67L2 4zm13 7.77l-6 1.59V6.61l2-.55V8.5l2-.53V5.53L15 5v6.77zm-2-7.24L6.5 2.8l2-.53L15 4l-2 .53z'
+				}
+			)
+		);
 
 	registerBlockType( 'gutenblocks/release', {
 
@@ -14,24 +32,7 @@
 
 		// Block Icon
 		icon: function() {
-			return el( 'svg', {
-				'aria-hidden': true,
-				role:          'img',
-				key:           'logo-release',
-				className:     'dashicon release-icon',
-				focusable:     'false',
-				width:         '20',
-				height:        '20',
-				viewBox:       '0 0 16 16',
-				stroke:        '#0073aa',
-				strokeWidth:   '0.5',
-				xmlns:         'http://www.w3.org/2000/svg'
-			}, el( 'path',
-					{
-						d: 'M1 4.27v7.47c0 .45.3.84.75.97l6.5 1.73c.16.05.34.05.5 0l6.5-1.73c.45-.13.75-.52.75-.97V4.27c0-.45-.3-.84-.75-.97l-6.5-1.74a1.4 1.4 0 0 0-.5 0L1.75 3.3c-.45.13-.75.52-.75.97zm7 9.09l-6-1.59V5l6 1.61v6.75zM2 4l2.5-.67L11 5.06l-2.5.67L2 4zm13 7.77l-6 1.59V6.61l2-.55V8.5l2-.53V5.53L15 5v6.77zm-2-7.24L6.5 2.8l2-.53L15 4l-2 .53z'
-					}
-				)
-			);
+			return githubReleaseIcon;
 		},
 
 		// Block Category
@@ -58,8 +59,7 @@
 
 		edit: function( props ) {
 			var download = 'https://github.com/' + gutenBlocksStrings.release.ghUsername,
-			    link     = download, selfAtts = wp.blocks.getBlockType( 'gutenblocks/release' ),
-			    image    = selfAtts.icon, downloadText = gutenBlocksStrings.release.downloadHTML;
+			    link = download, image = githubReleaseIcon, downloadText = gutenBlocksStrings.release.downloadHTML;
 
 			var current = Object.assign( {
 				name: '',
