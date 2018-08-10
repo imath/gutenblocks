@@ -6,7 +6,35 @@
 ( function( wp ) {
 	var el                = wp.element.createElement,
 	    registerBlockType = wp.blocks.registerBlockType,
-	    innerBlocks       = wp.editor.InnerBlocks;
+	    innerBlocks       = wp.editor.InnerBlocks,
+	    allowedLanguages  = [],
+	    columnTemplates   = {};
+
+	gutenblocksI18n.languages.forEach( function( l, i ) {
+		var blockName = 'gutenblocks/language-' + l.replace( '_', '-' ).toLowerCase();
+
+		allowedLanguages.push( blockName );
+		columnTemplates[ i ] = [ blockName ];
+
+		registerBlockType( blockName, {
+			title: l,
+			parent: [ 'gutenblocks/i18n' ],
+			icon: 'rows',
+			category: 'common',
+			edit: function() {
+				return el( 'div', {
+					className: 'layout-row-' + l
+				}, el( innerBlocks, {
+					templateLock: false
+				} ) );
+			},
+			save: function() {
+				return el( 'div', {
+					className: 'layout-row-' + l
+				}, el( innerBlocks.Content ) );
+			}
+		} );
+	} );
 
 	registerBlockType( 'gutenblocks/i18n', {
 
@@ -19,19 +47,26 @@
 		// Block Category
 		category: 'layout',
 
+		attributes: {
+			columns: {
+				type: 'number',
+				'default': allowedLanguages.length
+			}
+		},
+
 		edit: function() {
-            // Output the rows of languages.
+			// Output the rows of languages.
 			return el( 'section', {
-                className: 'gutenblocks-i18n'
-            }, el( innerBlocks, {
-                layouts: gutenblocksI18n.languages.map( function( l ) {
-                    return { name: 'row-' + l, label: l, icon: 'rows' };
-                } )
-            } ) );
+				className: 'gutenblocks-i18n'
+			}, el( innerBlocks, {
+				template:  columnTemplates,
+				templateLock:  'all',
+				allowedBlocks: allowedLanguages
+			} ) );
 		},
 
 		save: function() {
-            return el( 'section', {}, el( innerBlocks.Content ) );
+			return el( 'section', {}, el( innerBlocks.Content ) );
 		}
 	} );
 

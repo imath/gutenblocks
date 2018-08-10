@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.5
+
++ _Requires Gutenberg 3.5.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Adapt to InnerBlocks changes introduced in Gutenberg 3.5.
+
+---
+
 ## 1.2.4
 
 + _Requires Gutenberg 3.0.0 & WordPress 4.9_

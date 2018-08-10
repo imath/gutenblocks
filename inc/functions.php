@@ -918,6 +918,7 @@ function gutenblocks_get_locale_from_uri( $uri = '' ) {
  * Only keeps the current locale version of the i18n Block.
  *
  * @since 1.2.0
+ * @since 1.2.5 Adapts to InnerBlocks changes introduced in Gutenberg 3.5.
  *
  * @param  string $content The Post content.
  * @return string          The Post content for the current locale.
@@ -930,36 +931,43 @@ function gutenblocks_translate_blocks( $content = '' ) {
 	preg_match_all( '/\<section class\=\"wp-block-gutenblocks-i18n\"\>([\s\S]*?)\<\/section\>/', $content, $matches );
 
 	if ( $matches[1] ) {
-		$locale = gutenblocks_get_locale();
+		$locale      = gutenblocks_get_locale();
+		$localeblock = sprintf( 'gutenblocks/language-%s', str_replace( '_', '-', strtolower( $locale ) ) );
 
 		foreach ( $matches[1] as $k => $m ) {
 			$blocks = gutenberg_parse_blocks( $m );
 
 			foreach( $blocks as $block ) {
-				if ( empty( $block['attrs']['layout'] ) || 'row-' . $locale === $block['attrs']['layout'] ) {
+				if ( empty( $block['blockName'] ) || $localeblock === $block['blockName'] ) {
 					continue;
 				}
 
-				// Remove all other languages blocks' content.
-				$content   = str_replace( $block['innerHTML'], '', $content );
-				$blockname = str_replace( '/', '\/',
-					str_replace( 'core/', '(?:core/)?',
-						preg_quote( $block['blockName'] )
-					)
-				);
+				if ( empty( $block['innerBlocks'] ) ) {
+					continue;
+				}
 
-				$footprint = (
-					'/<!--\s+wp:(' .
-					$blockname .
-					')(\s+(\{.*' .
-					$block['attrs']['layout'] .
-					'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
-					$blockname .
-					'\s+--\>|\/--\>)/'
-				);
+				foreach ( $block['innerBlocks'] as $innerblock ) {
+					// Remove all other languages blocks' content.
+					$content   = str_replace( $innerblock['innerHTML'], '', $content );
+					$blockname = str_replace( '/', '\/',
+						str_replace( 'core/', '(?:core/)?',
+							preg_quote( $innerblock['blockName'] )
+						)
+					);
 
-				// Remove remaining HTML comments.
-				$content = preg_replace( $footprint, '', $content, 1 );
+					$footprint = (
+						'/<!--\s+wp:(' .
+						$blockname .
+						')(\s+(\{.*' .
+						$block['attrs']['layout'] .
+						'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
+						$blockname .
+						'\s+--\>|\/--\>)/'
+					);
+
+					// Remove remaining HTML comments.
+					$content = preg_replace( $footprint, '', $content, 1 );
+				}
 			}
 		}
 
