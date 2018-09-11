@@ -924,7 +924,7 @@ function gutenblocks_get_locale_from_uri( $uri = '' ) {
  * @return string          The Post content for the current locale.
  */
 function gutenblocks_translate_blocks( $content = '' ) {
-	if ( is_admin() && ! wp_doing_ajax() ) {
+	if ( defined( 'REST_REQUEST' ) && REST_REQUEST && false !== strpos( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-admin/' ) ) {
 		return $content;
 	}
 
