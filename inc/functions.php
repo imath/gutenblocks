@@ -919,12 +919,14 @@ function gutenblocks_get_locale_from_uri( $uri = '' ) {
  *
  * @since 1.2.0
  * @since 1.2.5 Adapts to InnerBlocks changes introduced in Gutenberg 3.5.
+ * @since 1.2.6 Casts WP_Block_Parser_Block objects as arrays to keep
+ *              compatibility with Gutenberg < 3.8.
  *
  * @param  string $content The Post content.
  * @return string          The Post content for the current locale.
  */
 function gutenblocks_translate_blocks( $content = '' ) {
-	if ( defined( 'REST_REQUEST' ) && REST_REQUEST && false !== strpos( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-admin/' ) ) {
+	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && false !== strpos( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-admin/' ) ) ) {
 		return $content;
 	}
 
@@ -938,6 +940,10 @@ function gutenblocks_translate_blocks( $content = '' ) {
 			$blocks = gutenberg_parse_blocks( $m );
 
 			foreach( $blocks as $block ) {
+				if ( is_object( $block ) ) {
+					$block = (array) $block;
+				}
+
 				if ( empty( $block['blockName'] ) || $localeblock === $block['blockName'] ) {
 					continue;
 				}
@@ -947,6 +953,10 @@ function gutenblocks_translate_blocks( $content = '' ) {
 				}
 
 				foreach ( $block['innerBlocks'] as $innerblock ) {
+					if ( is_object( $innerblock ) ) {
+						$innerblock = (array) $innerblock;
+					}
+
 					// Remove all other languages blocks' content.
 					$content   = str_replace( $innerblock['innerHTML'], '', $content );
 					$blockname = str_replace( '/', '\/',
