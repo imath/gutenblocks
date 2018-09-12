@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.2.6
+
++ _Requires Gutenberg 3.5.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Dubber block: only look for blocks "to translate" on front-end.
+- Dubber block: adapt `gutenberg_parse_blocks()` changes introduced in Gutenberg 3.8.
+
+---
+
 ## 1.2.5
 
 + _Requires Gutenberg 3.5.0 & WordPress 4.9_
