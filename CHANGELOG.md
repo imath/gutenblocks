@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.2.7
+
++ _Requires Gutenberg 3.5.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Dubber block: make sure to cast as array as deeply as needed the result of the blocks parsing.
+
+---
+
 ## 1.2.6
 
 + _Requires Gutenberg 3.5.0 & WordPress 4.9_
