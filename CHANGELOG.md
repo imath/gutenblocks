@@ -8,6 +8,7 @@
 ### Features
 
 - Convert Gist urls as Gist blocks.
+- Improve the Gist loader style.
 
 ---
 

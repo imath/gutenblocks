@@ -59,6 +59,10 @@ figure.wp-block-gutenblocks-photo figcaption,
 	vertical-align: -5px;
 }
 
+[data-type="gutenblocks/gist"] .wp-block-embed.is-loading {
+	background: none;
+}
+
 [data-type="gutenblocks/release"] .plugin-card {
 	float: none;
 	margin: 0;
