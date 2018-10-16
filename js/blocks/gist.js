@@ -73,12 +73,11 @@
 						} );
 					}
 				);
-			}
+			};
 
 			var onUrlSubmit = function( event ) {
 				event.preventDefault();
 
-				needsSubmit = false;
 				props.setAttributes( {
 					loading: true,
 					needsSubmit: false
@@ -175,7 +174,7 @@
 					},
 					transform: function( node ) {
 						return createBlock( 'gutenblocks/gist', {
-							url: node.textContent.trim(),
+							url: node.textContent.trim()
 						} );
 					}
 				}
