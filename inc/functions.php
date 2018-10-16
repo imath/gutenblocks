@@ -944,6 +944,10 @@ function gutenblocks_translate_blocks( $content = '' ) {
 					$block = (array) $block;
 				}
 
+				if ( is_object( $block['attrs'] ) ) {
+					$block['attrs'] = (array) $block['attrs'];
+				}
+
 				if ( empty( $block['blockName'] ) || $localeblock === $block['blockName'] ) {
 					continue;
 				}
@@ -965,18 +969,22 @@ function gutenblocks_translate_blocks( $content = '' ) {
 						)
 					);
 
-					$footprint = (
-						'/<!--\s+wp:(' .
-						$blockname .
-						')(\s+(\{.*' .
-						$block['attrs']['layout'] .
-						'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
-						$blockname .
-						'\s+--\>|\/--\>)/'
-					);
+					$layout = ! empty( $block['attrs']['layout'] ) ? $block['attrs']['layout'] : false;
 
-					// Remove remaining HTML comments.
-					$content = preg_replace( $footprint, '', $content, 1 );
+					if ( $layout ) {
+						$footprint = (
+							'/<!--\s+wp:(' .
+							$blockname .
+							')(\s+(\{.*' .
+							$layout .
+							'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
+							$blockname .
+							'\s+--\>|\/--\>)/'
+						);
+
+						// Remove remaining HTML comments.
+						$content = preg_replace( $footprint, '', $content, 1 );
+					}
 				}
 			}
 		}
