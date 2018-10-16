@@ -14,6 +14,9 @@
 		// Block Title
 		title: gutenBlocksStrings.gist.title,
 
+		// Description
+		description: gutenBlocksStrings.gist.description,
+
 		// Block Icon
 		icon: function() {
 			return el( 'svg', {
