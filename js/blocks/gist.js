@@ -5,9 +5,9 @@
 /* global gutenBlocksStrings, wpApiSettings */
 ( function( wp ) {
 	var el                = wp.element.createElement,
-		registerBlockType = wp.blocks.registerBlockType,
-		createBlock       = wp.blocks.createBlock,
-		SandBox           = wp.components.SandBox;
+	    registerBlockType = wp.blocks.registerBlockType,
+	    createBlock       = wp.blocks.createBlock,
+	    SandBox           = wp.components.SandBox;
 
 	registerBlockType( 'gutenblocks/gist', {
 
