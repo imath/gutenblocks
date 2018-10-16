@@ -10,6 +10,10 @@
 - Convert Gist urls as Gist blocks.
 - Improve the Gist loader style.
 
+### Props
+
+@gregoirenoyelle
+
 ---
 
 ## 1.2.7
