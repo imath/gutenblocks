@@ -6,12 +6,16 @@
 ( function( wp ) {
 	var el                = wp.element.createElement,
 	    registerBlockType = wp.blocks.registerBlockType,
+	    createBlock       = wp.blocks.createBlock,
 	    SandBox           = wp.components.SandBox;
 
 	registerBlockType( 'gutenblocks/gist', {
 
 		// Block Title
 		title: gutenBlocksStrings.gist.title,
+
+		// Description
+		description: gutenBlocksStrings.gist.description,
 
 		// Block Icon
 		icon: function() {
@@ -56,13 +60,7 @@
 				} );
 			};
 
-			var onUrlSubmit = function( event ) {
-				event.preventDefault();
-
-				props.setAttributes( {
-					loading: true
-				} );
-
+			var fetchGist = function() {
 				var url = encodeURIComponent( props.attributes.url );
 
 				window.fetch( wpApiSettings.root + 'oembed/1.0/proxy' +
@@ -80,8 +78,21 @@
 				);
 			};
 
+			var onUrlSubmit = function( event ) {
+				event.preventDefault();
+
+				props.setAttributes( {
+					loading: true,
+					needsSubmit: false
+				} );
+			};
+
 			// Output the form to insert a gist.
-			if ( ! props.attributes.src && ! props.attributes.loading ) {
+			if ( ( ! props.attributes.url && ! props.attributes.loading ) || props.attributes.needsSubmit ) {
+				props.setAttributes( {
+					needsSubmit: true
+				} );
+
 				return el(
 					'div', {
 						className: 'components-placeholder'
@@ -124,6 +135,8 @@
 
 			// Display the loader.
 			} else if ( ! props.attributes.src ) {
+				fetchGist();
+
 				return el( 'div', {
 					className: 'components-placeholder'
 
@@ -153,6 +166,22 @@
 			}
 
 			return el( 'div', null, '\n' + props.attributes.url + '\n' );
+		},
+
+		transforms: {
+			from: [
+				{
+					type: 'raw',
+					isMatch: function ( node ) {
+						return node.nodeName === 'P' && /^\s*(https?:\/\/gist\.github\.com\S+)\s*$/i.test( node.textContent );
+					},
+					transform: function( node ) {
+						return createBlock( 'gutenblocks/gist', {
+							url: node.textContent.trim()
+						} );
+					}
+				}
+			]
 		}
 	} );
 

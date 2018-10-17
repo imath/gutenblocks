@@ -185,6 +185,7 @@ function gutenblocks_l10n() {
 			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
 			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
 			'buttonPlaceholder'  => _x( 'Insérer',      'Gist Block Button', 'gutenblocks' ),
+			'description'        => _x( 'Ce bloc vous permet d’embarquer facilement vos codes sources hébergés sur gist.GitHub.com', 'Gist Block description', 'gutenblocks' ),
 		),
 		'release' => array(
 			'title'              => _x( 'GitHub Release',        'Release Block Title',        'gutenblocks' ),

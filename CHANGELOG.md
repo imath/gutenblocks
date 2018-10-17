@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.3.0
+
++ _Requires Gutenberg & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Features
+
+- Convert Gist urls as Gist blocks.
+- Improve the Gist loader style.
+
+### Props
+
+@gregoirenoyelle
+
+---
+
 ## 1.2.7
 
 + _Requires Gutenberg 3.5.0 & WordPress 4.9_
