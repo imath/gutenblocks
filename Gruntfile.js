@@ -11,7 +11,7 @@ module.exports = function( grunt ) {
 			grunt: {
 				src: ['Gruntfile.js']
 			},
-			all: ['Gruntfile.js', 'js/*/*.js']
+			all: ['Gruntfile.js', 'js/*/*.js', 'js/*.js']
 		},
 		checktextdomain: {
 			options: {
@@ -40,7 +40,7 @@ module.exports = function( grunt ) {
 			}
 		},
 		clean: {
-			all: ['assets/*.min.css', 'js/*/*.min.js']
+			all: ['assets/*.min.css', 'js/*.min.js', 'js/*/*.min.js']
 		},
 		makepot: {
 			target: {
@@ -64,7 +64,7 @@ module.exports = function( grunt ) {
 				extDot: 'last',
 				expand: true,
 				ext: '.min.js',
-				src: ['js/*/*.js', '!*.min.js']
+				src: ['js/*.js', 'js/*/*.js', '!*.min.js']
 			}
 		},
 		cssmin: {

@@ -2,9 +2,9 @@
 # This file is distributed under the GNU/GPL 2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GutenBlocks 1.3.1\n"
+"Project-Id-Version: GutenBlocks 1.4.0-alpha\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/gutenblocks/issues\n"
-"POT-Creation-Date: 2018-10-25 00:47:31+00:00\n"
+"POT-Creation-Date: 2018-10-25 01:01:05+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,6 +29,10 @@ msgstr ""
 
 #: inc/functions.php:644
 msgid "Télécharger la version %s"
+msgstr ""
+
+#: inc/functions.php:914
+msgid "Il n‘y a pas de traduction disponible."
 msgstr ""
 
 #. Plugin Name of the plugin/theme
