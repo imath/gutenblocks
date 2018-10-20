@@ -68,10 +68,14 @@ final class GutenBlocks {
 	 */
 	private function globals() {
 		// Version
+<<<<<<< HEAD
 		$this->version = '1.5.0';
 
 		// DB Version
 		$this->db_version = get_option( 'gutenblocks_version', 0 );
+=======
+		$this->version = '1.4.0-alpha';
+>>>>>>> 2aa8955... Rebase with master to take 1.3.2 bug fixes
 
 		// Domain
 		$this->domain = 'gutenblocks';

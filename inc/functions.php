@@ -111,7 +111,7 @@ function gutenblocks_are_urls_pretty() {
  */
 function gutenblocks_get_languages() {
 	$languages = get_available_languages();
-	$locale    = get_locale();
+	$locale    = get_user_locale();
 
 	if ( ! $languages ) {
 		return false;
@@ -601,7 +601,7 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		$container_class .= ' layout-' . $a['layout'];
 
 		$locale = str_replace( 'row-', '', $a['layout'] );
-		if ( gutenblocks_is_locale( $locale ) && $locale !== get_locale() && $locale === gutenblocks_get_locale() ) {
+		if ( gutenblocks_is_locale( $locale ) && $locale !== get_user_locale() && $locale === gutenblocks_get_locale() ) {
 			switch_to_locale( $locale );
 
 			if ( ! is_textdomain_loaded( 'gutenblocks' ) ) {
@@ -766,7 +766,7 @@ add_action( 'admin_init', 'gutenblocks_upgrade', 100 );
  */
 function gutenblocks_translate_post_link( $link = '', $language = '' ) {
 	if ( ! $language ) {
-		$language = strtolower( str_replace( '_', '-', get_locale() ) );
+		$language = strtolower( str_replace( '_', '-', get_user_locale() ) );
 	}
 
 	if ( gutenblocks_are_urls_pretty() ) {
@@ -788,7 +788,7 @@ function gutenblocks_translate_post_link( $link = '', $language = '' ) {
  */
 function gutenblocks_get_language_switcher( $current = '' ) {
 	$locales     = gutenblocks_get_languages();
-	$site_locale = get_locale();
+	$site_locale = get_user_locale();
 
 	if ( ! $locales || ! did_action( 'wp_head' ) || ! is_singular() ) {
 		return;
@@ -796,6 +796,15 @@ function gutenblocks_get_language_switcher( $current = '' ) {
 
 	if ( ! $current ) {
 		$current = $site_locale;
+	}
+
+	if ( ! wp_doing_ajax() ) {
+		wp_enqueue_script( 'gutenblocks-i18n-ajax', sprintf( '%1$s/i18n-ajax%2$s.js', gutenblocks_js_url(), gutenblocks_min_suffix() ), array(), gutenblocks_version(), true );
+		wp_localize_script( 'gutenblocks-i18n-ajax', 'gutenblocksl10nAjax', array(
+			'ajaxurl' => admin_url( 'admin-ajax.php', 'relative' ),
+			'loader'  => network_admin_url( 'images/spinner-2x.gif' ),
+			'nonce'   => wp_create_nonce( 'gutenblocks-i18n-ajax' ),
+		) );
 	}
 
 	$switcher = '<ul class="gutenblocks-i18n-switcher">';
@@ -836,7 +845,7 @@ function gutenblocks_get_language_switcher( $current = '' ) {
  * @return string The locale for GutenBlocks.
  */
 function gutenblocks_get_locale() {
-	$locale = get_locale();
+	$locale = get_user_locale();
 	$qv     = gutenblocks_get_locale_from_slug( get_query_var( 'translate' ) );
 
 	if ( $qv ) {
@@ -906,6 +915,44 @@ function gutenblocks_get_locale_from_uri( $uri = '' ) {
 }
 
 /**
+ * Translate the Dubber block using Ajax.
+ *
+ * @since 1.4.0
+ */
+function gutenblock_ajax_translate() {
+	check_ajax_referer( 'gutenblocks-i18n-ajax', 'nonce' );
+
+	$error = array( 'message' => sprintf(
+		'<p id="gutenblocks-ajax-error" class="description error">%s</p>',
+		__( 'Il n‘y a pas de traduction disponible.', 'gutenblocks' )
+	) );
+
+	if ( empty( $_POST['link'] ) ) {
+		wp_send_json( $error, 404 );
+	}
+
+	$url_parts = explode( 'translate', $_POST['link'] );
+	$post_id   = url_to_postid( $url_parts[0] );
+
+	// No post ID, stop!
+	if ( ! $post_id ) {
+		wp_send_json( $error, 404 );
+	}
+
+	// Set the query var to translate the content.
+	if ( false !== strpos( $_POST['link'], 'translate' ) ) {
+		set_query_var( 'translate', trim( end( $url_parts ), '/' ) );
+	}
+
+	$post = get_post( $post_id );
+	$content = apply_filters( 'the_content', $post->post_content );
+
+	wp_send_json( array( 'post_content' => $content ), 200 );
+}
+add_action( 'wp_ajax_gutenblock_ajax_translate',        'gutenblock_ajax_translate' );
+add_action( 'wp_ajax_nopriv_gutenblock_ajax_translate', 'gutenblock_ajax_translate' );
+
+/**
  * Only keeps the current locale version of the i18n Block.
  *
  * @since 1.2.0
@@ -917,7 +964,7 @@ function gutenblocks_get_locale_from_uri( $uri = '' ) {
  * @return string          The Post content for the current locale.
  */
 function gutenblocks_translate_blocks( $content = '' ) {
-	if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST && false !== strpos( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-admin/' ) ) ) {
+	if ( ( is_admin() && ! wp_doing_ajax() ) || ( defined( 'REST_REQUEST' ) && REST_REQUEST && false !== strpos( wp_parse_url( $_SERVER['HTTP_REFERER'], PHP_URL_PATH ), '/wp-admin/' ) ) ) {
 		return $content;
 	}
 
@@ -972,7 +1019,7 @@ function gutenblocks_translate_blocks( $content = '' ) {
 			}
 		}
 
-		if ( ! is_front_page() ) {
+		if ( ! is_home() || is_front_page() ) {
 			$content = gutenblocks_get_language_switcher( $locale ) . $content;
 		}
 
