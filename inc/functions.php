@@ -632,30 +632,7 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		$count  = sprintf( '<p class="description">%s</p>', wp_kses( $notes, array( 'br' => true ) ) ) ."\n" . $count;
 	}
 
-	$output = sprintf( '<div class="%1$s">
-			<div class="plugin-card-top">
-				<div class="name column-name">
-					<h3>
-						<a href="%2$s">
-							%3$s
-							%4$s
-						</a>
-					</h3>
-				</div>
-				<div class="desc column-description">
-					%5$s
-					<p class="description">
-						<a href="%6$s" target="_blank">%7$s</a>
-					</p>
-				</div>
-				<div class="download">
-					<button class="button submit gh-download-button">
-						<img src="%8$s" class="gh-release-download-icon">
-						<a href="%2$s">%9$s</a>
-					</button>
-				</div>
-			</div>
-		</div>',
+	$output = sprintf( '<div class="%1$s"><div class="plugin-card-top"><div class="name column-name"><h3><a href="%2$s">%3$s %4$s</a></h3></div><div class="desc column-description">%5$s<p class="description"><a href="%6$s" target="_blank">%7$s</a></p></div><div class="download"><button class="button submit gh-download-button"><img src="%8$s" class="gh-release-download-icon"><a href="%2$s">%9$s</a></button></div></div></div>',
 		$container_class,
 		esc_url( $download_url ),
 		$logo,
@@ -1002,7 +979,7 @@ function gutenblocks_translate_blocks( $content = '' ) {
 
 	return $content;
 }
-add_filter( 'the_content', 'gutenblocks_translate_blocks', 8 );
+add_filter( 'the_content', 'gutenblocks_translate_blocks', 6 );
 
 /**
  * Get the locale out of the URI and switch the site's one if needed.

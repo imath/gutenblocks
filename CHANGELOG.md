@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.1
+
++ _Requires Gutenberg 4.1.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Dubber block: hook `the_content` earlier to be able to parse blocks.
+- GitHub Release block: make sure no extra br are added during front-end display.
+
+---
+
 ## 1.3.0
 
 + _Requires Gutenberg & WordPress 4.9_
