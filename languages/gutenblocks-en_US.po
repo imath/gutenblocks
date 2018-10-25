@@ -2,10 +2,10 @@
 # This file is distributed under the GNU/GPL 2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GutenBlocks 1.3.0\n"
+"Project-Id-Version: GutenBlocks 1.3.1\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/gutenblocks/issues\n"
-"POT-Creation-Date: 2018-10-16 17:16:37+00:00\n"
-"PO-Revision-Date: 2018-10-16 19:18+0100\n"
+"POT-Creation-Date: 2018-10-25 00:47:31+00:00\n"
+"PO-Revision-Date: 2018-10-25 02:49+0100\n"
 "Last-Translator: imath <mathchristo@yahoo.fr>\n"
 "Language-Team: FRENCH <contact@imathi.eu>\n"
 "Language: en_US\n"
@@ -25,11 +25,11 @@ msgid_plural "%d téléchargements"
 msgstr[0] "%d download"
 msgstr[1] "%d downloads"
 
-#: inc/functions.php:665
+#: inc/functions.php:642
 msgid "Afficher la page GitHub de la version"
 msgstr "Go to the release page on GitHub"
 
-#: inc/functions.php:667
+#: inc/functions.php:644
 msgid "Télécharger la version %s"
 msgstr "Download %s release"
 
@@ -99,8 +99,8 @@ msgid ""
 "Ce bloc vous permet d’embarquer facilement vos codes sources hébergés sur "
 "gist.GitHub.com"
 msgstr ""
-"Easily embed your the source codes you are hosting on gist.GitHub.com "
-"thanks to this block."
+"Easily embed your the source codes you are hosting on gist.GitHub.com thanks "
+"to this block."
 
 #: inc/functions.php:191
 msgctxt "Release Block Title"
