@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.2
+
++ _Requires Gutenberg 4.1.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Dubber block: make sure to remove footprints of the language blocks that are not displayed.
+
 ## 1.3.1
 
 + _Requires Gutenberg 4.1.0 & WordPress 4.9_

@@ -941,29 +941,13 @@ function gutenblocks_translate_blocks( $content = '' ) {
 
 					// Remove all other languages blocks' content.
 					$content   = str_replace( $innerblock['innerHTML'], '', $content );
-					$blockname = str_replace( '/', '\/',
-						str_replace( 'core/', '(?:core/)?',
-							preg_quote( $innerblock['blockName'] )
-						)
-					);
-
-					$layout = ! empty( $block['attrs']['layout'] ) ? $block['attrs']['layout'] : false;
-
-					if ( $layout ) {
-						$footprint = (
-							'/<!--\s+wp:(' .
-							$blockname .
-							')(\s+(\{.*' .
-							$layout .
-							'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
-							$blockname .
-							'\s+--\>|\/--\>)/'
-						);
-
-						// Remove remaining HTML comments.
-						$content = preg_replace( $footprint, '', $content, 1 );
-					}
 				}
+
+				$blockname = addcslashes( $block['blockName'], '/' );
+				$footprint = '/(<!--\s+wp:' . $blockname .'\s+-->)(.|\n)*?(<!--\s+\/wp:' . $blockname .'\s+-->)/';
+
+				// Remove the dubber language container
+				$content = preg_replace( $footprint, '', $content, 1 );
 			}
 		}
 
