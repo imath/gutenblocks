@@ -940,14 +940,22 @@ function gutenblocks_translate_blocks( $content = '' ) {
 					}
 
 					// Remove all other languages blocks' content.
-					$content   = str_replace( $innerblock['innerHTML'], '', $content );
+					$content = str_replace( $innerblock['innerHTML'], '', $content );
 				}
 
-				$blockname = addcslashes( $block['blockName'], '/' );
-				$footprint = '/(<!--\s+wp:' . $blockname .'\s+-->)(.|\n)*?(<!--\s+\/wp:' . $blockname .'\s+-->)/';
+				$parts = explode( '<!-- wp:' . $block['blockName'] .' -->', $content );
 
-				// Remove the dubber language container
-				$content = preg_replace( $footprint, '', $content, 1 );
+				if ( isset( $parts[1] ) ) {
+					$content = reset( $parts );
+
+					foreach ( $parts as $part ) {
+						$end = explode( '<!-- /wp:' . $block['blockName'] .' -->', $part );
+
+						if ( isset( $end[1] ) ) {
+							$content .= end( $end );
+						}
+					}
+				}
 			}
 		}
 
