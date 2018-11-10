@@ -737,6 +737,10 @@ function gutenblocks_upgrade() {
 		flush_rewrite_rules( false );
 	}
 
+	if ( (float) $db_version < 1.4 ) {
+		return;
+	}
+
 	// Update version.
 	update_option( 'gutenblocks_version', $version );
 }
