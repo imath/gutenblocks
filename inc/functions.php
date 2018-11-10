@@ -185,13 +185,6 @@ function gutenblocks_style_languages( $languages = array() ) {
  */
 function gutenblocks_l10n() {
 	$g_l10n = array(
-		'photo' => array(
-			'title'              => _x( 'Photo (URL)',          'Photo Block Title',   'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL de la photo…',     'Photo Block Input',   'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',              'Photo Block Button',  'gutenblocks' ),
-			'captionPlaceholder' => _x( 'Ajoutez une légende…', 'Photo Block Caption', 'gutenblocks' ),
-			'editBubble'         => _x( 'Modifier',             'Photo Block Bubble',  'gutenblocks' ),
-		),
 		'gist' => array(
 			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
 			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
@@ -226,10 +219,6 @@ function gutenblocks_register_scripts() {
 	$url = gutenblocks_js_url();
 
 	$scripts = apply_filters( 'gutenblocks_register_javascripts', array(
-		'gutenblocks-photo' => array(
-			'location' => sprintf( '%1$sblocks/photo%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
-		),
 		'gutenblocks-gist' => array(
 			'location' => sprintf( '%1$sblocks/gist%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
@@ -294,10 +283,6 @@ function gutenblocks_register_dynamic_blocks() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return false;
 	}
-
-	register_block_type( 'gutenblocks/photo', array(
-		'editor_script' => 'gutenblocks-photo',
-	) );
 
 	register_block_type( 'gutenblocks/gist', array(
 		'editor_script' => 'gutenblocks-gist',

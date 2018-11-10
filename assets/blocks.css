@@ -1,48 +1,5 @@
 /* Style for blocks */
 
-/* Photo/WP Embed ************************************************************/
-
-figure.wp-block-gutenblocks-photo img {
-	display: inline-block;
-	width: inherit;
-}
-
-figure.wp-block-gutenblocks-photo figcaption,
-[data-type="gutenblocks/photo"] figcaption {
-	margin-top: 0.5em;
-	color: #6c7781;
-	font-size: 13px;
-}
-
-[data-type="gutenblocks/photo"] .components-placeholder__label label:before,
-[data-type="gutenblocks/wp-embed"] .components-placeholder__label label:before {
-	font-family: 'dashicons';
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	font-size: 20px;
-	line-height: 1;
-	text-decoration: inherit;
-	font-weight: normal;
-	font-style: normal;
-	text-align: center;
-	-webkit-transition: color .1s ease-in 0;
-	transition: color .1s ease-in 0;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	vertical-align: text-top;
-	margin-right: 5px;
-	margin-top: -1px;
-}
-
-[data-type="gutenblocks/photo"] .components-placeholder__label label:before {
-	content: "\f306";
-}
-
-[data-type="gutenblocks/wp-embed"] .components-placeholder__label label:before {
-	content: "\f324";
-}
-
 /* GitHub ********************************************************************/
 
 .wp-block-gutenblocks-gist .gist .blob-num {
