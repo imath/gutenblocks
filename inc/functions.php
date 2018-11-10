@@ -22,6 +22,17 @@ function gutenblocks_version() {
 }
 
 /**
+ * Get DB version.
+ *
+ * @since  1.4.0
+ *
+ * @return string the DB version.
+ */
+function gutenblocks_db_version() {
+	return gutenblocks()->db_version;
+}
+
+/**
  * Get the plugin's JS Url.
  *
  * @since  1.0.0
@@ -725,7 +736,7 @@ add_action( 'init', 'gutenblocks_translate_rewrite_rules' );
  * @since  1.2.0
  */
 function gutenblocks_upgrade() {
-	$db_version = get_option( 'gutenblocks_version', 0 );
+	$db_version = gutenblocks_db_version();
 	$version    = gutenblocks_version();
 
 	if ( ! version_compare( $db_version, $version, '<' ) ) {
