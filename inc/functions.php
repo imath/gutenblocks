@@ -716,6 +716,17 @@ function gutenblocks_translate_rewrite_rules() {
 add_action( 'init', 'gutenblocks_translate_rewrite_rules' );
 
 /**
+ * Upgrade the DB Version.
+ *
+ * @since 1.4.0
+ */
+function gutenblocks_upgrade_db_version() {
+	update_option( 'gutenblocks_version', gutenblocks_version() );
+
+	return 1;
+}
+
+/**
  * Perform some upgrade tasks if needed.
  *
  * @since  1.2.0
@@ -738,7 +749,7 @@ function gutenblocks_upgrade() {
 	}
 
 	// Update version.
-	update_option( 'gutenblocks_version', $version );
+	gutenblocks_upgrade_db_version();
 }
 add_action( 'admin_init', 'gutenblocks_upgrade', 100 );
 
