@@ -304,7 +304,7 @@ function gutenblocks_upgrade_notice() {
 	<div id="message" class="update-nag">
 		<p>
 			<?php printf( __( 'Une mise à niveau est nécessaire pour Gutenblocks. Merci de vous rendre sur la page de %s.', 'gutenblocks' ),
-				sprintf( '<a href="%1$s">%2$s</a>', esc_url( gutenblocks_get_upgrade_url() ), esc_html__( 'mise à niveau') )
+				sprintf( '<a href="%1$s">%2$s</a>', esc_url( gutenblocks_get_upgrade_url() ), esc_html__( 'mise à niveau', 'gutenblocks' ) )
 			); ?>
 		</p>
 	</div>

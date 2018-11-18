@@ -199,6 +199,7 @@ function gutenblocks_l10n() {
 			'notesPlaceholder'   => _x( 'Notes sur la version…', 'Release Block Notes',        'gutenblocks' ),
 			'ghUsername'         => gutenblocks_github_release_get_username(),
 			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
+			'description'        => _x( 'Ce bloc vous permet de créer une fiche descriptive de votre extension hébergée sur GitHub.com', 'Release Block description', 'gutenblocks' ),
 		),
 	);
 
@@ -261,8 +262,9 @@ function gutenblocks_register_scripts() {
 		wp_deregister_script( 'gutenblocks-i18n' );
 	} else {
 		wp_localize_script( 'gutenblocks-i18n', 'gutenblocksI18n', array(
-			'languages' => $languages,
-			'title'     => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+			'languages'   => $languages,
+			'title'       => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+			'description' => _x( 'Ce bloc vous permet de proposer votre contenu en plusieurs langue.', 'Dubber Block description', 'gutenblocks' ),
 		) );
 
 		if ( ! wp_doing_ajax() ) {
