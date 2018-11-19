@@ -940,28 +940,20 @@ function gutenblocks_translate_blocks( $content = '' ) {
 					}
 
 					// Remove all other languages blocks' content.
-					$content   = str_replace( $innerblock['innerHTML'], '', $content );
-					$blockname = str_replace( '/', '\/',
-						str_replace( 'core/', '(?:core/)?',
-							preg_quote( $innerblock['blockName'] )
-						)
-					);
+					$content = str_replace( $innerblock['innerHTML'], '', $content );
+				}
 
-					$layout = ! empty( $block['attrs']['layout'] ) ? $block['attrs']['layout'] : false;
+				$parts = explode( '<!-- wp:' . $block['blockName'] .' -->', $content );
 
-					if ( $layout ) {
-						$footprint = (
-							'/<!--\s+wp:(' .
-							$blockname .
-							')(\s+(\{.*' .
-							$layout .
-							'.*\}))?\s+(-->.*\<!--\s+\/wp:' .
-							$blockname .
-							'\s+--\>|\/--\>)/'
-						);
+				if ( isset( $parts[1] ) ) {
+					$content = reset( $parts );
 
-						// Remove remaining HTML comments.
-						$content = preg_replace( $footprint, '', $content, 1 );
+					foreach ( $parts as $part ) {
+						$end = explode( '<!-- /wp:' . $block['blockName'] .' -->', $part );
+
+						if ( isset( $end[1] ) ) {
+							$content .= end( $end );
+						}
 					}
 				}
 			}
