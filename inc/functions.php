@@ -22,6 +22,17 @@ function gutenblocks_version() {
 }
 
 /**
+ * Get DB version.
+ *
+ * @since  1.4.0
+ *
+ * @return string the DB version.
+ */
+function gutenblocks_db_version() {
+	return gutenblocks()->db_version;
+}
+
+/**
  * Get the plugin's JS Url.
  *
  * @since  1.0.0
@@ -174,13 +185,6 @@ function gutenblocks_style_languages( $languages = array() ) {
  */
 function gutenblocks_l10n() {
 	$g_l10n = array(
-		'photo' => array(
-			'title'              => _x( 'Photo (URL)',          'Photo Block Title',   'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL de la photo…',     'Photo Block Input',   'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',              'Photo Block Button',  'gutenblocks' ),
-			'captionPlaceholder' => _x( 'Ajoutez une légende…', 'Photo Block Caption', 'gutenblocks' ),
-			'editBubble'         => _x( 'Modifier',             'Photo Block Bubble',  'gutenblocks' ),
-		),
 		'gist' => array(
 			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
 			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
@@ -195,6 +199,7 @@ function gutenblocks_l10n() {
 			'notesPlaceholder'   => _x( 'Notes sur la version…', 'Release Block Notes',        'gutenblocks' ),
 			'ghUsername'         => gutenblocks_github_release_get_username(),
 			'downloadHTML'       => _x( 'Télécharger la version %s', 'Release Block Download', 'gutenblocks' ),
+			'description'        => _x( 'Ce bloc vous permet de créer une fiche descriptive de votre extension hébergée sur GitHub.com', 'Release Block description', 'gutenblocks' ),
 		),
 	);
 
@@ -215,10 +220,6 @@ function gutenblocks_register_scripts() {
 	$url = gutenblocks_js_url();
 
 	$scripts = apply_filters( 'gutenblocks_register_javascripts', array(
-		'gutenblocks-photo' => array(
-			'location' => sprintf( '%1$sblocks/photo%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
-		),
 		'gutenblocks-gist' => array(
 			'location' => sprintf( '%1$sblocks/gist%2$s.js', $url, $min ),
 			'deps'     => array( 'wp-blocks', 'wp-element' ),
@@ -261,8 +262,9 @@ function gutenblocks_register_scripts() {
 		wp_deregister_script( 'gutenblocks-i18n' );
 	} else {
 		wp_localize_script( 'gutenblocks-i18n', 'gutenblocksI18n', array(
-			'languages' => $languages,
-			'title'     => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+			'languages'   => $languages,
+			'title'       => _x( 'Doubleur (Expérimental)', 'i18n Block Title',  'gutenblocks' ),
+			'description' => _x( 'Ce bloc vous permet de proposer votre contenu en plusieurs langue.', 'Dubber Block description', 'gutenblocks' ),
 		) );
 
 		if ( ! wp_doing_ajax() ) {
@@ -283,10 +285,6 @@ function gutenblocks_register_dynamic_blocks() {
 	if ( ! function_exists( 'register_block_type' ) ) {
 		return false;
 	}
-
-	register_block_type( 'gutenblocks/photo', array(
-		'editor_script' => 'gutenblocks-photo',
-	) );
 
 	register_block_type( 'gutenblocks/gist', array(
 		'editor_script' => 'gutenblocks-gist',
@@ -720,12 +718,23 @@ function gutenblocks_translate_rewrite_rules() {
 add_action( 'init', 'gutenblocks_translate_rewrite_rules' );
 
 /**
+ * Upgrade the DB Version.
+ *
+ * @since 1.4.0
+ */
+function gutenblocks_upgrade_db_version() {
+	update_option( 'gutenblocks_version', gutenblocks_version() );
+
+	return 1;
+}
+
+/**
  * Perform some upgrade tasks if needed.
  *
  * @since  1.2.0
  */
 function gutenblocks_upgrade() {
-	$db_version = get_option( 'gutenblocks_version', 0 );
+	$db_version = gutenblocks_db_version();
 	$version    = gutenblocks_version();
 
 	if ( ! version_compare( $db_version, $version, '<' ) ) {
@@ -737,8 +746,12 @@ function gutenblocks_upgrade() {
 		flush_rewrite_rules( false );
 	}
 
+	if ( (float) $db_version < 1.4 ) {
+		return;
+	}
+
 	// Update version.
-	update_option( 'gutenblocks_version', $version );
+	gutenblocks_upgrade_db_version();
 }
 add_action( 'admin_init', 'gutenblocks_upgrade', 100 );
 
