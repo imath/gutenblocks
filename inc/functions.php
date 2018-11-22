@@ -235,7 +235,7 @@ function gutenblocks_register_scripts() {
 	), $url, $min, $v );
 
 	foreach ( $scripts as $js_handle => $script ) {
-		$in_footer = false;
+		$in_footer = true;
 
 		if ( isset( $script['footer'] ) ) {
 			$in_footer = $script['footer'];
