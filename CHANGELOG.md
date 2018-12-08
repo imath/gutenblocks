@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.4.1
+
++ _Requires Gutenberg 4.5.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Make sure JavaScripts are loaded into the footer.
+
+---
+
 ## 1.4.0
 
 + _Requires Gutenberg 4.4.0 & WordPress 4.9_
@@ -15,6 +26,8 @@ The Photo block has been removed, now it's possible to use the Gutenberg Image b
 
 - Upgrade routine to replace Photo blocks by Image blocks.
 - Add a description to the Dubber and GitHub Release blocks.
+
+---
 
 ## 1.3.1
 

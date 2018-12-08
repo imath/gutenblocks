@@ -222,15 +222,15 @@ function gutenblocks_register_scripts() {
 	$scripts = apply_filters( 'gutenblocks_register_javascripts', array(
 		'gutenblocks-gist' => array(
 			'location' => sprintf( '%1$sblocks/gist%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
+			'deps'     => array( 'wp-block-library' ),
 		),
 		'gutenblocks-release' => array(
 			'location' => sprintf( '%1$sblocks/release%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
+			'deps'     => array( 'wp-blocks' ),
 		),
 		'gutenblocks-i18n' => array(
 			'location' => sprintf( '%1$sblocks/i18n%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-blocks', 'wp-element' ),
+			'deps'     => array( 'wp-editor' ),
 		),
 	), $url, $min, $v );
 
