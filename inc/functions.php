@@ -252,7 +252,7 @@ function gutenblocks_register_scripts() {
 
 	wp_register_style( 'gutenblocks',
 		sprintf( '%1$sblocks%2$s.css', gutenblocks_assets_url(), $min ),
-		array( 'wp-blocks' ),
+		array( 'wp-block-library' ),
 		$v
 	);
 
@@ -741,7 +741,7 @@ function gutenblocks_upgrade() {
 		return;
 	}
 
-	if ( (float) $db_version < 1.2 ) {
+	if ( (float) $db_version < 1.2 || (float) $db_version < 1.5 ) {
 		delete_option( 'rewrite_rules' );
 		flush_rewrite_rules( false );
 	}
@@ -928,7 +928,7 @@ function gutenblocks_translate_blocks( $content = '' ) {
 		$localeblock = sprintf( 'gutenblocks/language-%s', str_replace( '_', '-', strtolower( $locale ) ) );
 
 		foreach ( $matches[1] as $k => $m ) {
-			$blocks = gutenberg_parse_blocks( $m );
+			$blocks = parse_blocks( $m );
 
 			foreach( $blocks as $block ) {
 				if ( is_object( $block ) ) {

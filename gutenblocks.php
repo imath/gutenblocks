@@ -3,8 +3,8 @@
  * Plugin Name: GutenBlocks
  * Plugin URI: https://imathi.eu/tag/gutenblocks/
  * Description: Ma collection personnelle de blocs Gutenberg.
- * Version: 1.4.2
- * Requires at least: 4.9
+ * Version: 1.5.0
+ * Requires at least: 5.0
  * Tested up to: 5.0
  * License: GNU/GPL 2
  * Author: imath
@@ -68,7 +68,7 @@ final class GutenBlocks {
 	 */
 	private function globals() {
 		// Version
-		$this->version = '1.4.2';
+		$this->version = '1.5.0';
 
 		// DB Version
 		$this->db_version = get_option( 'gutenblocks_version', 0 );
@@ -140,7 +140,7 @@ if ( ! function_exists( 'gutenblocks' ) ) :
  * @since 1.0.0
  */
 function gutenblocks() {
-	if ( ! function_exists( 'gutenberg_init' ) ) {
+	if ( ! function_exists( 'render_block' ) ) {
 		return false;
 	}
 

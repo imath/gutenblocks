@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.5.0
+
++ _Requires WordPress 5.0_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Make sure JavaScripts to use the right dependancies for Gutenblocks.
+- Stop using Gutenberg specific functions and use the corresponding ones introduced in WordPress 5.0
+- Set the plugin CSS dependency to `wp-block-library` handle to make sure it loads.
+
+---
+
 ## 1.4.1
 
 + _Requires Gutenberg 4.5.0 & WordPress 4.9_

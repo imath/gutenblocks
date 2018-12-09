@@ -2,17 +2,17 @@
 # This file is distributed under the GNU/GPL 2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GutenBlocks 1.4.1\n"
+"Project-Id-Version: GutenBlocks 1.5.0\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/gutenblocks/issues\n"
-"POT-Creation-Date: 2018-11-22 06:21:16+00:00\n"
-"PO-Revision-Date: 2018-11-22 07:47+0100\n"
+"POT-Creation-Date: 2018-12-09 09:03:23+00:00\n"
+"PO-Revision-Date: 2018-12-09 10:06+0100\n"
 "Last-Translator: imath <mathchristo@yahoo.fr>\n"
 "Language-Team: FRENCH <contact@imathi.eu>\n"
 "Language: en_US\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.1\n"
+"X-Generator: Poedit 2.2\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: inc/functions.php:449
@@ -114,7 +114,7 @@ msgstr "https://imathi.eu/tag/gutenblocks/"
 
 #. Description of the plugin/theme
 msgid "Ma collection personnelle de blocs Gutenberg."
-msgstr "my personal collection of Gutenberg blocks."
+msgstr "My personal collection of Gutenberg blocks."
 
 #. Author of the plugin/theme
 msgid "imath"
@@ -146,7 +146,7 @@ msgid ""
 "gist.GitHub.com"
 msgstr ""
 "Easily embed the source codes you are hosting on gist.GitHub.com thanks to "
-"this block."
+"this block"
 
 #: inc/functions.php:195
 msgctxt "Release Block Title"
@@ -203,4 +203,4 @@ msgstr "Replacing Photo blocks by Image blocks. Please wait"
 #: inc/upgrade.php:283
 msgctxt "Upgrader feedback message"
 msgid "Mise à jour de la version de l’extension"
-msgstr "Updating the plugin version."
+msgstr "Updating the plugin version"
