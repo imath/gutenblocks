@@ -1,13 +1,46 @@
 # Changelog
 
-## 1.3.2
+## 1.5.0
 
-+ _Requires Gutenberg 4.1.0 & WordPress 4.9_
++ _Requires WordPress 5.0_
 + _Tested up to WordPress 5.0_
 
 ### Bug fixes
 
+- Make sure JavaScripts to use the right dependancies for Gutenblocks.
+- Stop using Gutenberg specific functions and use the corresponding ones introduced in WordPress 5.0
+- Set the plugin CSS dependency to `wp-block-library` handle to make sure it loads.
+
+---
+
+## 1.4.1
+
++ _Requires Gutenberg 4.5.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+### Bug fixes
+
+- Make sure JavaScripts are loaded into the footer.
+
+---
+
+## 1.4.0
+
++ _Requires Gutenberg 4.4.0 & WordPress 4.9_
++ _Tested up to WordPress 5.0_
+
+The Photo block has been removed, now it's possible to use the Gutenberg Image block to add an image thanks to its URL.
+
+### Bug fixes
+
 - Dubber block: make sure to remove footprints of the language blocks that are not displayed.
+
+### Features
+
+- Upgrade routine to replace Photo blocks by Image blocks.
+- Add a description to the Dubber and GitHub Release blocks.
+
+---
 
 ## 1.3.1
 

@@ -30,6 +30,9 @@
 		// Block Title
 		title: gutenBlocksStrings.release.title,
 
+		// Description
+		description: gutenBlocksStrings.release.description,
+
 		// Block Icon
 		icon: function() {
 			return githubReleaseIcon;

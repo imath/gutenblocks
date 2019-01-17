@@ -41,6 +41,9 @@
 		// Block Title
 		title: gutenblocksI18n.title,
 
+		// Description
+		description: gutenblocksI18n.description,
+
 		// Block Icon
 		icon: 'translation',
 
