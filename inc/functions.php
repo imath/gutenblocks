@@ -802,7 +802,7 @@ function gutenblocks_get_language_switcher( $current = '' ) {
 		wp_enqueue_script( 'gutenblocks-i18n-ajax', sprintf( '%1$s/i18n-ajax%2$s.js', gutenblocks_js_url(), gutenblocks_min_suffix() ), array(), gutenblocks_version(), true );
 		wp_localize_script( 'gutenblocks-i18n-ajax', 'gutenblocksl10nAjax', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php', 'relative' ),
-			'loader'  => network_admin_url( 'images/spinner-2x.gif' ),
+			'loader'  => admin_url( 'images/spinner-2x.gif' ),
 			'nonce'   => wp_create_nonce( 'gutenblocks-i18n-ajax' ),
 		) );
 	}
