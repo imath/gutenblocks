@@ -153,24 +153,24 @@ function gutenblocks_style_languages( $languages = array() ) {
 	$flag_master = new GutenBlocks_flagMaster;
 
 	$style = '';
+
 	foreach( $languages as $language ) {
 		$style .= sprintf( '
-			body.wp-admin [data-type="gutenblocks/i18n"] .layout-row-%1$s {
-				position: relative;
-				margin-bottom: 10px;
-			}
-
 			body.wp-admin [data-type="gutenblocks/i18n"] .layout-row-%1$s:before {
 				content: "%2$s";
 				position: absolute;
-				top: -12px;
-				left: 10px;
+				top: -17px;
+				left: -12px;
 			}
 
 			.gutenblocks-i18n-switcher li.nav-%1$s a:before {
 				content: "%2$s";
 			}
-		%3$s', $language, $flag_master::emojiFlag( strtolower( substr( $language, -2 ) ) ), "\n" );
+			%3$s',
+			$language,
+			$flag_master::emojiFlag( strtolower( substr( $language, -2 ) ) ),
+			"\n"
+		);
 	}
 
 	return $style;

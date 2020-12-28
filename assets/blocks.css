@@ -148,12 +148,29 @@ body:not(.wp-admin) .plugin-card p.description {
 	}
 }
 
-body.wp-admin [data-type="gutenblocks/i18n"] .editor-block-list__layout {
-	border: dashed 1px #CCC;
+body.wp-admin [data-type="gutenblocks/i18n"] .block-editor-inner-blocks {
+	min-height: 50px;
 }
 
-body.wp-admin [data-type="gutenblocks/i18n"] .editor-block-list__layout:first-child {
-	border-color: #222;
+body.wp-admin [data-type="gutenblocks/i18n"].is-selected [class*="layout-row"],
+body.wp-admin [data-type="gutenblocks/i18n"].has-child-selected [class*="layout-row"] {
+	outline-width: 3px;
+	outline-style: dashed;
+	outline-offset: 15px;
+	outline-color: rgba(145,151,162,.25);
+}
+
+body.wp-admin [data-type="gutenblocks/i18n"].is-selected [class*="layout-row"]:after,
+body.wp-admin [data-type="gutenblocks/i18n"].has-child-selected [class*="layout-row"]:after {
+	content:"";
+	display: block;
+	clear:both;
+	margin-bottom: 50px;
+}
+
+body.wp-admin [data-type="gutenblocks/i18n"] [class*="layout-row"] {
+	position: relative;
+	margin-bottom: 10px;
 }
 
 .gutenblocks-i18n-switcher {

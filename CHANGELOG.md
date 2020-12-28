@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.5.1
+
++ _Requires WordPress 5.0_
++ _Tested up to WordPress 5.6_
+
+### Bug fixes
+
+- Improve the i18n block to ease its usage from the WP Block Editor.
+
+---
+
 ## 1.5.0
 
 + _Requires WordPress 5.0_
