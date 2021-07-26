@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.6.0
+
++ _Requires WordPress 5.8_
++ _Tested up to WordPress 5.8_
+
+### Bug fixes
+
+- Stop using the wp-editor dependency for the i18n block.
+- Unregister the i18n block when managing widgets.
+- Improve the Gist GitHub block display so that it is more in line with WP Embed Block.
+
+---
+
 ## 1.5.1
 
 + _Requires WordPress 5.0_

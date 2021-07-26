@@ -5,10 +5,10 @@
 /* global gutenblocksI18n */
 ( function( wp ) {
 	var el                = wp.element.createElement,
-	    registerBlockType = wp.blocks.registerBlockType,
-	    innerBlocks       = wp.editor.InnerBlocks,
-	    allowedLanguages  = [],
-	    columnTemplates   = {};
+		registerBlockType = wp.blocks.registerBlockType,
+		innerBlocks       = wp.blockEditor.InnerBlocks,
+		allowedLanguages  = [],
+		columnTemplates   = {};
 
 	gutenblocksI18n.languages.forEach( function( l, i ) {
 		var blockName = 'gutenblocks/language-' + l.replace( '_', '-' ).toLowerCase();
@@ -70,6 +70,14 @@
 
 		save: function() {
 			return el( 'section', {}, el( innerBlocks.Content ) );
+		}
+	} );
+
+	wp.domReady( function () {
+		var isCoreEditor = wp.data.select( 'core/editor' );
+
+		if ( ! isCoreEditor ) {
+			wp.blocks.unregisterBlockType( 'gutenblocks/i18n' );
 		}
 	} );
 

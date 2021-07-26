@@ -187,8 +187,9 @@ function gutenblocks_l10n() {
 	$g_l10n = array(
 		'gist' => array(
 			'title'              => _x( 'GitHub Gist',  'Gist Block Title',  'gutenblocks' ),
-			'inputPlaceholder'   => _x( 'URL du gist…', 'Gist Block Input',  'gutenblocks' ),
-			'buttonPlaceholder'  => _x( 'Insérer',      'Gist Block Button', 'gutenblocks' ),
+			'instructions'       => _x( 'Collez un lien vers le Gist que vous souhaitez afficher sur votre site.',  'Gist Block Instructions', 'gutenblocks' ),
+			'inputPlaceholder'   => _x( 'Saisissez l’URL du Gist à embarquer…', 'Gist Block Input',  'gutenblocks' ),
+			'buttonPlaceholder'  => _x( 'Embarquer',      'Gist Block Button', 'gutenblocks' ),
 			'description'        => _x( 'Ce bloc vous permet d’embarquer facilement vos codes sources hébergés sur gist.GitHub.com', 'Gist Block description', 'gutenblocks' ),
 		),
 		'release' => array(
@@ -211,6 +212,7 @@ function gutenblocks_l10n() {
  *
  * @since 1.0.0
  * @since 1.2.0 Register the editor script for the i18n Block.
+ * @since 1.6.0 Stop using the wp-editor dependency for the i18n block
  */
 function gutenblocks_register_scripts() {
 	$min = gutenblocks_min_suffix();
@@ -230,7 +232,7 @@ function gutenblocks_register_scripts() {
 		),
 		'gutenblocks-i18n' => array(
 			'location' => sprintf( '%1$sblocks/i18n%2$s.js', $url, $min ),
-			'deps'     => array( 'wp-editor' ),
+			'deps'     => array( 'wp-block-editor', 'wp-blocks', 'wp-dom-ready' ),
 		),
 	), $url, $min, $v );
 
