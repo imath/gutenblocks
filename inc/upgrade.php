@@ -30,13 +30,13 @@ function gutenblocks_upgrade_photo_block( $number = 50 ) {
 		if ( ! has_block( 'gutenblocks/photo', $post ) ) {
 			continue;
 		}
-		
+
 		preg_match_all( '/<!--\s+wp:gutenblocks\/photo\s+(.*?)\s+-->([\s\S]*?)<!--\s+\/wp:gutenblocks\/photo\s+-->/', $post->post_content, $matches );
 
 		if ( ! $matches || ! isset( $matches[1] ) || ! isset( $matches[2] ) ) {
 			continue;
 		}
-		
+
 		foreach ( $matches[1] as $k => $attrs ) {
 			$attributes = json_decode( $attrs );
 			$inner_html = $matches[2][ $k ];
@@ -85,7 +85,7 @@ function gutenblocks_upgrade_photo_block( $number = 50 ) {
 
 			$post->post_content = str_replace( $matches[0][ $k ], $image_block, $post->post_content );
 		}
-		
+
 		wp_update_post( $post );
 		$upgraded += 1;
 	}
@@ -132,7 +132,7 @@ function gutenblocks_get_upgrade_url() {
 
 /**
  * Manage upgrade actions & add inline script for the Auto upgrader.
- * 
+ *
  * @since 1.4.0
  */
 function gutenblocks_upgrade_load() {
@@ -170,7 +170,7 @@ add_action( 'load-dashboard_page_gutenblocks-upgrade', 'gutenblocks_upgrade_load
 
 /**
  * Upgrade Administration screen output.
- * 
+ *
  * @since 1.4.0
  */
 function gutenblocks_upgrade_page() {
@@ -203,7 +203,7 @@ function gutenblocks_upgrade_page() {
 		<?php elseif ( ! $upgraded ) : ?>
 			<p><span class="attention"><?php esc_html_e( 'Aussi, pour plus de précautions, il est recommandé de sauvegarder votre base de données avant de cliquer sur le bouton « Mettre à niveau ».', 'gutenblocks' ); ?></span></p>
 		<?php endif; ?>
-		
+
 		<?php if ( ! $upgraded ) : ?>
 			<div class="submit">
 				<a href="<?php echo esc_url( $upgrade_url ); ?>" class="button button-primary" id="gutenblocks-upgrade">
@@ -220,7 +220,7 @@ function gutenblocks_upgrade_page() {
 
 /**
  * Add a submenu to the dashboard to upgrade Gutenblocks.
- * 
+ *
  * @since 1.4.0
  */
 function gutenblocks_upgrade_menu() {
@@ -301,7 +301,7 @@ function gutenblocks_upgrade_notice() {
 		return;
 	}
 	?>
-	<div id="message" class="update-nag">
+	<div id="message" class="update-nag notice notice-warning">
 		<p>
 			<?php printf( __( 'Une mise à niveau est nécessaire pour Gutenblocks. Merci de vous rendre sur la page de %s.', 'gutenblocks' ),
 				sprintf( '<a href="%1$s">%2$s</a>', esc_url( gutenblocks_get_upgrade_url() ), esc_html__( 'mise à niveau', 'gutenblocks' ) )

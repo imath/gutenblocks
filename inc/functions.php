@@ -352,7 +352,7 @@ add_action( 'plugins_loaded', 'gutenblocks_register_embed_providers', 14 );
  * @param  array $args      The oembed arguments.
  * @return string           The URL to request.
  */
-function gutenblocks_oembed_fetch_url( $provider = '', $url, $args ) {
+function gutenblocks_oembed_fetch_url( $provider = '', $url = '', $args = array() ) {
 	$provider_data = wp_parse_url( $provider );
 
 	if ( ! isset( $provider_data['host'] ) || 'gist.github.com' !== $provider_data['host'] ) {
