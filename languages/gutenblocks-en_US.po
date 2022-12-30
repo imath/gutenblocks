@@ -2,10 +2,10 @@
 # This file is distributed under the GNU/GPL 2.
 msgid ""
 msgstr ""
-"Project-Id-Version: GutenBlocks 1.6.0\n"
+"Project-Id-Version: GutenBlocks 1.6.1\n"
 "Report-Msgid-Bugs-To: https://github.com/imath/gutenblocks/issues\n"
-"POT-Creation-Date: 2021-07-26 17:45:01+00:00\n"
-"PO-Revision-Date: 2021-07-26 19:51+0200\n"
+"POT-Creation-Date: 2022-12-30 17:38:37+00:00\n"
+"PO-Revision-Date: 2022-12-30 18:46+0100\n"
 "Last-Translator: imath <mathchristo@yahoo.fr>\n"
 "Language-Team: FRENCH <contact@imathi.eu>\n"
 "Language: en_US\n"
