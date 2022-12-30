@@ -22,9 +22,9 @@
     "matchdep": "^2.0.0"
   },
   "engines": {
-		"node": ">=14.15.0",
-		"npm": ">=6.14.8"
-	},
+    "node": ">=14.15.0",
+    "npm": ">=6.14.8"
+  },
   "keywords": [
     "gutenberg",
     "blocks"
@@ -36,5 +36,5 @@
     "type": "git",
     "url": "https://github.com/imath/gutenblocks.git"
   },
-  "version": "1.6.0"
+  "version": "1.6.1"
 }
