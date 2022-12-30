@@ -8,13 +8,13 @@
 		registerBlockType = wp.blocks.registerBlockType,
 		innerBlocks       = wp.blockEditor.InnerBlocks,
 		allowedLanguages  = [],
-		columnTemplates   = {};
+		columnTemplates   = [];
 
 	gutenblocksI18n.languages.forEach( function( l, i ) {
 		var blockName = 'gutenblocks/language-' + l.replace( '_', '-' ).toLowerCase();
 
 		allowedLanguages.push( blockName );
-		columnTemplates[ i ] = [ blockName ];
+		columnTemplates.push( [ blockName, {} ] );
 
 		registerBlockType( blockName, {
 			title: l,
