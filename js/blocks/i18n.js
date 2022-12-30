@@ -10,7 +10,7 @@
 		allowedLanguages  = [],
 		columnTemplates   = [];
 
-	gutenblocksI18n.languages.forEach( function( l, i ) {
+	gutenblocksI18n.languages.forEach( function( l ) {
 		var blockName = 'gutenblocks/language-' + l.replace( '_', '-' ).toLowerCase();
 
 		allowedLanguages.push( blockName );
@@ -19,7 +19,7 @@
 		registerBlockType( blockName, {
 			title: l,
 			parent: [ 'gutenblocks/i18n' ],
-			icon: 'rows',
+			icon: 'block-default',
 			category: 'common',
 			edit: function() {
 				return el( 'div', {
