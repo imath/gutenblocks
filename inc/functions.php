@@ -632,7 +632,7 @@ function gutenblocks_github_release_callback( $attributes = array() ) {
 		$count  = sprintf( '<p class="description">%s</p>', wp_kses( $notes, array( 'br' => true ) ) ) ."\n" . $count;
 	}
 
-	$output = sprintf( '<div class="%1$s"><div class="plugin-card-top"><div class="name column-name"><h3><a href="%2$s">%3$s %4$s</a></h3></div><div class="desc column-description">%5$s<p class="description"><a href="%6$s" target="_blank">%7$s</a></p></div><div class="download"><button class="button submit gh-download-button"><img src="%8$s" class="gh-release-download-icon"><a href="%2$s">%9$s</a></button></div></div></div>',
+	$output = sprintf( '<div class="%1$s"><div class="plugin-card-top"><div class="name column-name"><h3><a href="%2$s">%3$s %4$s</a></h3></div><div class="desc column-description">%5$s<p class="description"><a href="%6$s" target="_blank">%7$s</a></p></div><div class="download wp-block-button"><button class="button submit gh-download-button wp-element-button"><img src="%8$s" class="gh-release-download-icon"><a href="%2$s">%9$s</a></button></div></div></div>',
 		$container_class,
 		esc_url( $download_url ),
 		$logo,
@@ -783,16 +783,17 @@ function gutenblocks_translate_post_link( $link = '', $language = '' ) {
 /**
  * Build the language switcher on singular templates.
  *
- * @since  1.2.0
+ * @since 1.2.0
  *
  * @param  string $current The current locale to use for the blocks.
  * @return string          HTML Output.
  */
 function gutenblocks_get_language_switcher( $current = '' ) {
-	$locales     = gutenblocks_get_languages();
-	$site_locale = get_locale();
+	$locales          = gutenblocks_get_languages();
+	$site_locale      = get_locale();
+	$include_switcher = wp_using_themes() && $locales && is_singular();
 
-	if ( ! $locales || ! did_action( 'wp_head' ) || ! is_singular() ) {
+	if ( ! $include_switcher ) {
 		return;
 	}
 

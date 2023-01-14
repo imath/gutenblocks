@@ -197,11 +197,11 @@
 							]
 						),
 						el( 'div', {
-							className: 'download',
+							className: 'download wp-block-button',
 							key      : 'release-download'
 						}, el( 'button', {
 							key      : 'download-button',
-							className: 'button submit gh-download-button'
+							className: 'button submit gh-download-button wp-element-button'
 							}, [
 									el( 'span', {
 										key : 'download-icon',
