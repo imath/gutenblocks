@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.6.2
+
++ _Requires WordPress 5.8_
++ _Tested up to WordPress 6.1_
+
+### Bug fixes
+
+- Make sure the language switcher is prepended to the `core/post-content` block.
+
+---
+
 ## 1.6.1
 
 + _Requires WordPress 5.8_
