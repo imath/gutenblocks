@@ -1,5 +1,7 @@
 # GutenBlocks
 
+** This WP plugin has been archived and is no more maintained. **
+
 WordPress plugin to house my personal collection of custom blocks for Gutenberg.
 
 ## GitHub Gist
